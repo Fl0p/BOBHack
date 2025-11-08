@@ -54,6 +54,24 @@
 
   const bobNamespace = (window.bobContent = window.bobContent || {});
   bobNamespace.AllegroLokalniePrefillService = AllegroLokalniePrefillService;
+
+  const registerPrefillService = (registration) => {
+    if (typeof bobNamespace.registerPrefillService === 'function') {
+      bobNamespace.registerPrefillService(registration);
+    } else {
+      bobNamespace._pendingPrefillRegistrations = bobNamespace._pendingPrefillRegistrations || [];
+      bobNamespace._pendingPrefillRegistrations.push(registration);
+    }
+  };
+
+  registerPrefillService({
+    id: 'allegrolokalnie',
+    key: 'allegroLokalniePrefillService',
+    create: ({ elementValueSetter }) =>
+      new AllegroLokalniePrefillService({
+        elementValueSetter
+      })
+  });
 })();
 
 

@@ -26,6 +26,7 @@
         "<all_urls>"
       ],
       "js": [
+        "content/runtime.js",
         "content/domExclusionRegistry.js",
         "content/domExclusionDefaults.js",
         "content/labelResolver.js",

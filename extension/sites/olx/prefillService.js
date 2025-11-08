@@ -67,6 +67,24 @@
 
   const bobNamespace = (window.bobContent = window.bobContent || {});
   bobNamespace.OlxPrefillService = OlxPrefillService;
+
+  const registerPrefillService = (registration) => {
+    if (typeof bobNamespace.registerPrefillService === 'function') {
+      bobNamespace.registerPrefillService(registration);
+    } else {
+      bobNamespace._pendingPrefillRegistrations = bobNamespace._pendingPrefillRegistrations || [];
+      bobNamespace._pendingPrefillRegistrations.push(registration);
+    }
+  };
+
+  registerPrefillService({
+    id: 'olx',
+    key: 'olxPrefillService',
+    create: ({ elementValueSetter }) =>
+      new OlxPrefillService({
+        elementValueSetter
+      })
+  });
 })();
 
 

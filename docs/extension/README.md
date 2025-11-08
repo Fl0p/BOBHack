@@ -10,28 +10,44 @@ The extension is located in the `extension/` directory with the following archit
 
 ```
 extension/
-├── manifest.json              # Extension manifest (v3)
-├── contentScript.js           # Main content script entry point
-├── background/                # Background service scripts
-│   ├── domPayload.js         # DOM payload handling
-│   └── fieldExtractor.js     # Form field extraction logic
-└── content/                   # Content script modules
-    ├── cssPathBuilder.js      # CSS selector generation
-    ├── domSnapshotCollector.js # DOM snapshot collection
-    ├── elementValueSetter.js  # Element value manipulation
-    ├── fieldValueApplier.js   # Form field value application
-    ├── labelResolver.js       # Field label resolution
-    └── messageRouter.js       # Message routing between scripts
+├── manifest.json                # Extension manifest (MV3)
+├── contentScript.js             # Slim bootstrap for runtime initialization
+├── src/common/messageTypes.js   # Shared message type constants
+├── content/
+│   ├── runtime.js               # Dependency bootstrap & service registry
+│   ├── domExclusionRegistry.js  # Exclusion selector registry
+│   ├── domExclusionDefaults.js  # Default exclusion selectors
+│   ├── labelResolver.js         # Field label lookup
+│   ├── cssPathBuilder.js        # CSS selector generation
+│   ├── domSnapshotCollector.js  # DOM snapshot authoring
+│   ├── elementValueSetter.js    # Element value manipulation
+│   ├── fieldValueApplier.js     # Field population logic
+│   └── messageRouter.js         # Content-side message router
+├── background/
+│   ├── index.js                 # Service worker entrypoint
+│   ├── processDom.js            # DOM processing orchestration (DI friendly)
+│   ├── domPayload.js            # DOM payload formatting
+│   ├── difyClient.js            # Dify HTTP client
+│   ├── fieldExtractor.js        # Field extraction from Dify response
+│   └── tabMessenger.js          # Messaging helper for content script bridge
+├── sites/
+│   ├── allegrolokalnie/
+│   │   └── prefillService.js    # Site-specific preparer registration
+│   └── olx/
+│       └── prefillService.js    # Site-specific preparer registration
+├── popup.html                   # Extension popup UI
+└── popup.js                     # Popup logic (ES module)
 ```
 
 ## architecture
 
 ### modular design
 
-The extension uses a namespace-based architecture for better dependency management:
-- Content scripts organized into separate modules
-- Background scripts handle DOM processing
-- Message routing for inter-script communication
+The extension uses a thin runtime bootstrap to assemble dependencies at execution time:
+- `content/runtime.js` validates and instantiates core services only once
+- Prefill handlers self-register through `registerPrefillService`, keeping the system open for extension
+- Shared `MESSAGE_TYPES` are sourced from `src/common/messageTypes.js` and reused across background, popup, and content scripts
+- Background orchestration (`processDom.js`) is built through dependency injection, easing future substitutions and testing
 
 ### key components
 
@@ -57,9 +73,14 @@ The extension uses a namespace-based architecture for better dependency manageme
 - Resolves labels associated with form fields
 - Handles various label association patterns
 
+**runtime.js** (extension/content/runtime.js)
+- Centralizes dependency creation and memoization
+- Exposes `registerPrefillService` for site-specific preparers
+- Ensures a single `MessageRouter` instance per tab
+
 **messageRouter.js** (extension/content/messageRouter.js)
-- Routes messages between content scripts and background
-- Provides unified communication interface
+- Routes messages between content scripts and background using `MESSAGE_TYPES`
+- Invokes registered page preparers before applying returned values
 
 #### background scripts
 
@@ -89,15 +110,11 @@ The extension uses Manifest V3 specification for:
 
 ## recent updates
 
-### refactoring (commit b015482)
-- Reorganized content scripts into namespace-based modules
-- Improved dependency management
-- Better code organization and maintainability
-
-### enhancements (commit 10fa2c7)
-- Updated extension name and description
-- Enhanced field extraction logic
-- Improved DOM payload handling
+### runtime refactor
+- Introduced `content/runtime.js` to bootstrap dependencies and manage prefill services
+- Migrated popup script to an ES module sharing `MESSAGE_TYPES`
+- Centralized background DOM processing via `createProcessDomSnapshot` factory
+- Removed ad-hoc logging and tightened error propagation for cleaner console output
 
 ## usage
 

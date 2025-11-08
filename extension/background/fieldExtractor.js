@@ -9,7 +9,6 @@ const parseJson = (value) => {
 export const extractFields = (payload) => {
   payload = payload.data.outputs.json_data;
 
-  console.log('matched fields', JSON.parse(payload));
   if (!payload) return [];
 
   const jsonString = typeof payload === 'string' ? payload : payload.json_data;

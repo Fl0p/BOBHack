@@ -12,20 +12,39 @@ const validatePayload = ({ domSnapshot, tabId }) => {
   }
 };
 
-export const processDomSnapshot = async ({ domSnapshot, tabId }) => {
-  validatePayload({ domSnapshot, tabId });
+export const createProcessDomSnapshot = ({
+  createDomRequestPayload: createPayload,
+  postDomPayload: postPayload,
+  extractFields: extract,
+  applyFieldsToTab: applyToTab
+}) => {
+  if (typeof createPayload !== 'function') throw new Error('createDomRequestPayload must be provided.');
+  if (typeof postPayload !== 'function') throw new Error('postDomPayload must be provided.');
+  if (typeof extract !== 'function') throw new Error('extractFields must be provided.');
+  if (typeof applyToTab !== 'function') throw new Error('applyFieldsToTab must be provided.');
 
-  const payload = createDomRequestPayload(domSnapshot);
-  const difyResponse = await postDomPayload(payload);
-  const fields = extractFields(difyResponse);
+  return async ({ domSnapshot, tabId }) => {
+    validatePayload({ domSnapshot, tabId });
 
-  if (!fields.length) {
-    throw new Error('Dify response does not contain fields.');
-  }
+    const payload = createPayload(domSnapshot);
+    const difyResponse = await postPayload(payload);
+    const fields = extract(difyResponse);
 
-  const applyResult = await applyFieldsToTab(tabId, fields);
-  if (!applyResult?.ok) {
-    throw new Error(applyResult?.error ?? 'Content script failed to apply fields.');
-  }
+    if (!fields.length) {
+      throw new Error('Dify response does not contain fields.');
+    }
+
+    const applyResult = await applyToTab(tabId, fields);
+    if (!applyResult?.ok) {
+      throw new Error(applyResult?.error ?? 'Content script failed to apply fields.');
+    }
+  };
 };
+
+export const processDomSnapshot = createProcessDomSnapshot({
+  createDomRequestPayload,
+  postDomPayload,
+  extractFields,
+  applyFieldsToTab
+});
 

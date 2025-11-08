@@ -1,9 +1,13 @@
 (() => {
+  const bobNamespace = (window.bobContent = window.bobContent || {});
+  const MESSAGE_TYPES = bobNamespace.MESSAGE_TYPES || {};
+
   class MessageRouter {
     constructor({ snapshotCollector, fieldValueApplier, pagePreparers = [] }) {
       this.snapshotCollector = snapshotCollector;
       this.fieldValueApplier = fieldValueApplier;
       this.pagePreparers = pagePreparers;
+      this.messageTypes = MESSAGE_TYPES;
       this.listener = this.handleMessage.bind(this);
     }
 
@@ -30,7 +34,7 @@
     handleMessage(message, sender, sendResponse) {
       if (!message?.type) return false;
 
-      if (message.type === 'COLLECT_DOM') {
+      if (message.type === this.messageTypes.COLLECT_DOM) {
         try {
           const domSnapshot = this.snapshotCollector.collect();
           sendResponse({ domSnapshot });
@@ -41,7 +45,7 @@
         return true;
       }
 
-      if (message.type === 'APPLY_FIELD_VALUES') {
+      if (message.type === this.messageTypes.APPLY_FIELD_VALUES) {
         const fields = message.payload?.fields ?? [];
         try {
           this.fieldValueApplier.apply(fields);
@@ -53,7 +57,7 @@
         return true;
       }
 
-      if (message.type === 'PREPARE_PAGE') {
+      if (message.type === this.messageTypes.PREPARE_PAGE) {
         (async () => {
           try {
             const results = await this.runPagePreparers(message.payload ?? {});
@@ -69,7 +73,6 @@
     }
   }
 
-  const bobNamespace = (window.bobContent = window.bobContent || {});
   bobNamespace.MessageRouter = MessageRouter;
 })();
 
