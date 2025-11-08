@@ -25,6 +25,12 @@
         "<all_urls>"
       ],
       "js": [
+        "content/labelResolver.js",
+        "content/cssPathBuilder.js",
+        "content/domSnapshotCollector.js",
+        "content/elementValueSetter.js",
+        "content/fieldValueApplier.js",
+        "content/messageRouter.js",
         "contentScript.js"
       ],
       "run_at": "document_idle"
