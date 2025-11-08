@@ -1,0 +1,33 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Make scripts executable
+      run: chmod +x scripts/rebuild-and-start.sh
+      
+    - name: Run rebuild and start
+      run: ./scripts/rebuild-and-start.sh
+      
+    - name: Check running containers
+      run: docker-compose ps
+      
+    - name: Show logs
+      if: failure()
+      run: docker-compose logs
+
