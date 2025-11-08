@@ -6,3 +6,5 @@ alwaysApply: true
 - All comments in code must be in English
 - All project docs in folder docs/
 - Add docs must be in English
+- Website/frontend content must be in English only
+
