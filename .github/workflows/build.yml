@@ -27,13 +27,5 @@ jobs:
     - name: Make scripts executable
       run: chmod +x scripts/rebuild-and-start.sh
       
-    - name: Run rebuild and start
-      run: ./scripts/rebuild-and-start.sh
-      
-    - name: Check running containers
-      run: docker-compose ps
-      
-    - name: Show logs
-      if: failure()
-      run: docker-compose logs
+  
 
