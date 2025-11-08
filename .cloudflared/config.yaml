@@ -1,0 +1,17 @@
+tunnel: aignite-local
+credentials-file: /etc/cloudflared/8cc1babf-1332-4cca-bb85-810424375faf.json
+
+ingress:
+  - hostname: bob.aignite.pl
+    service: http://frontend:80
+
+  - hostname: api.aignite.pl
+    service: http://backend:3001
+
+  - hostname: dify.aignite.pl
+    service: http://dify-web:3000
+
+  - hostname: dify-api.aignite.pl
+    service: http://dify-api:5001
+
+  - service: http_status:404

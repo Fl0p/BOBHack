@@ -156,15 +156,16 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared
     restart: unless-stopped
-    command: tunnel --no-autoupdate run
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel --config /etc/cloudflared/config.yaml run
+    volumes:
+      - ./.cloudflared:/etc/cloudflared:ro
     networks:
       - bobhack-network
     depends_on:
       - frontend
       - backend
       - dify-web
+      - dify-api
 
 networks:
   bobhack-network:
