@@ -1,5 +1,5 @@
 tunnel: aignite-local
-credentials-file: /etc/cloudflared/8cc1babf-1332-4cca-bb85-810424375faf.json
+credentials-file: /etc/cloudflared/f3ae1442-62b0-4c23-8808-46c7e22dff72.json
 
 ingress:
   - hostname: bob.aignite.pl
