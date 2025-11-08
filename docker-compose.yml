@@ -26,6 +26,9 @@ services:
       - BACKEND_DB_USER=${BACKEND_DB_USER:-bobhack}
       - BACKEND_DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - BACKEND_DB_NAME=${BACKEND_DB_NAME:-bobhack}
+      - SESSION_SECRET=${SESSION_SECRET}
+    volumes:
+      - ./client_secret.json:/app/client_secret.json:ro
     depends_on:
       backend-db:
         condition: service_healthy

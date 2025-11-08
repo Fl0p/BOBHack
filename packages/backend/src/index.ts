@@ -22,7 +22,10 @@ import { OAuth2Client } from 'google-auth-library';
 import { initPool, getPool, initializeDatabase } from './db.js';
 
 // Load Google OAuth credentials
-const clientSecretPath = resolve(__dirname, '../../../client_secret.json');
+// In Docker: /app/client_secret.json, in dev: ../../../client_secret.json
+const clientSecretPath = process.env.NODE_ENV === 'production' 
+  ? '/app/client_secret.json' 
+  : resolve(__dirname, '../../../client_secret.json');
 const clientSecret = JSON.parse(readFileSync(clientSecretPath, 'utf-8'));
 const googleClient = new OAuth2Client(clientSecret.web.client_id);
 
