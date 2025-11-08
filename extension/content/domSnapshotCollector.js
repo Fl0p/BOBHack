@@ -1,8 +1,9 @@
 (() => {
   class DomSnapshotCollector {
-    constructor({ labelResolver, pathBuilder }) {
+    constructor({ labelResolver, pathBuilder, exclusionRegistry }) {
       this.labelResolver = labelResolver;
       this.pathBuilder = pathBuilder;
+      this.exclusionRegistry = exclusionRegistry ?? null;
     }
 
     collect() {
@@ -20,15 +21,14 @@
     isCollectable(element) {
       if (!element) return false;
       if (element.disabled) return false;
-
-      const tag = element.tagName.toLowerCase();
-      if (tag === 'input') {
-        const type = (element.type ?? '').toLowerCase();
-        const excludedTypes = new Set(['hidden', 'button', 'submit', 'reset', 'image']);
-        if (excludedTypes.has(type)) return false;
-      }
-
+      if (this.isExcluded(element)) return false;
+      if (element.tagName.toLowerCase() === 'input' && element.type === 'hidden') return false;
       return true;
+    }
+
+    isExcluded(element) {
+      if (!this.exclusionRegistry) return false;
+      return this.exclusionRegistry.shouldExclude(element);
     }
 
     mapElement(element) {

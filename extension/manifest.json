@@ -26,6 +26,8 @@
         "<all_urls>"
       ],
       "js": [
+        "content/domExclusionRegistry.js",
+        "content/domExclusionDefaults.js",
         "content/labelResolver.js",
         "content/cssPathBuilder.js",
         "content/domSnapshotCollector.js",

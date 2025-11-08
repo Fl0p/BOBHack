@@ -44,7 +44,6 @@
     setInputValue(element, value) {
       const type = element.type;
       if (type === 'file') {
-        console.warn('Skipping file input assignment for security reasons.', element);
         return;
       }
       if (type === 'checkbox') {
