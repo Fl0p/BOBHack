@@ -87,7 +87,7 @@ services:
       SECRET_KEY: ${DIFY_SECRET_KEY}
       
       # CORS
-      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl
+      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl,https://dify-api.aignite.pl
       WEB_API_CORS_ALLOW_ORIGINS: '*'
     volumes:
       - dify-api-storage:/app/storage
@@ -142,8 +142,8 @@ services:
     container_name: dify-web
     restart: unless-stopped
     environment:
-      CONSOLE_API_URL: https://dify.aignite.pl
-      APP_API_URL: https://dify.aignite.pl
+      CONSOLE_API_URL: https://dify-api.aignite.pl
+      APP_API_URL: https://dify-api.aignite.pl
     depends_on:
       - dify-api
     networks:
