@@ -150,6 +150,8 @@ services:
       PLUGIN_DIFY_INNER_API_URL: http://dify-api:5001
       PLUGIN_DIFY_INNER_API_KEY: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI}
+      PLUGIN_DAEMON_URL: http://plugin_daemon:5002
+      PLUGIN_DAEMON_KEY: ${PLUGIN_DAEMON_KEY:-lYkiYYT6owG+71oLerGzA7GXCgOT}
       
       # Vector Store (default: Weaviate)
       VECTOR_STORE: ${VECTOR_STORE:-weaviate}
@@ -170,6 +172,8 @@ services:
       dify-db:
         condition: service_healthy
       dify-redis:
+        condition: service_started
+      plugin_daemon:
         condition: service_started
     networks:
       - bobhack-network
@@ -220,6 +224,8 @@ services:
       # Plugin settings
       PLUGIN_DIFY_INNER_API_URL: http://dify-api:5001
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI}
+      PLUGIN_DAEMON_URL: http://plugin_daemon:5002
+      PLUGIN_DAEMON_KEY: ${PLUGIN_DAEMON_KEY:-lYkiYYT6owG+71oLerGzA7GXCgOT}
       
       # Vector Store
       VECTOR_STORE: ${VECTOR_STORE:-weaviate}
@@ -240,6 +246,8 @@ services:
       dify-db:
         condition: service_healthy
       dify-redis:
+        condition: service_started
+      plugin_daemon:
         condition: service_started
     networks:
       - bobhack-network
