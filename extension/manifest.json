@@ -31,6 +31,7 @@
         "content/domSnapshotCollector.js",
         "content/elementValueSetter.js",
         "content/fieldValueApplier.js",
+        "sites/olx/prefillService.js",
         "content/messageRouter.js",
         "contentScript.js"
       ],

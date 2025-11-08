@@ -42,6 +42,13 @@ button.addEventListener('click', async () => {
       return;
     }
 
+    updateStatus('Preparing page...');
+    const prepareResponse = await sendMessageToTab(tabId, { type: 'PREPARE_PAGE' });
+    if (prepareResponse?.ok === false) {
+      updateStatus(prepareResponse.error ?? 'Failed to prepare page.');
+      return;
+    }
+
     const domResponse = await sendMessageToTab(tabId, { type: 'COLLECT_DOM' });
     if (!domResponse?.domSnapshot) {
       updateStatus('Unable to capture DOM.');

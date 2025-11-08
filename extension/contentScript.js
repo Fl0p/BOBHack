@@ -8,6 +8,7 @@
     ['DomSnapshotCollector', bobNamespace.DomSnapshotCollector],
     ['ElementValueSetter', bobNamespace.ElementValueSetter],
     ['FieldValueApplier', bobNamespace.FieldValueApplier],
+    ['OlxPrefillService', bobNamespace.OlxPrefillService],
     ['MessageRouter', bobNamespace.MessageRouter]
   ];
 
@@ -28,12 +29,24 @@
         elementValueSetter: instances.elementValueSetter
       });
 
+    if (!instances.olxPrefillService)
+      instances.olxPrefillService = new bobNamespace.OlxPrefillService({
+        elementValueSetter: instances.elementValueSetter
+      });
+
+    const pagePreparers = bobNamespace.pagePreparers ?? [];
+    if (instances.olxPrefillService && !pagePreparers.includes(instances.olxPrefillService)) {
+      pagePreparers.push(instances.olxPrefillService);
+    }
+
     bobNamespace.instances = instances;
+    bobNamespace.pagePreparers = pagePreparers;
 
     if (!bobNamespace.routerInstance) {
       const messageRouter = new bobNamespace.MessageRouter({
         snapshotCollector: instances.snapshotCollector,
-        fieldValueApplier: instances.fieldValueApplier
+        fieldValueApplier: instances.fieldValueApplier,
+        pagePreparers: bobNamespace.pagePreparers ?? []
       });
       messageRouter.register();
       bobNamespace.routerInstance = messageRouter;

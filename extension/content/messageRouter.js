@@ -1,14 +1,30 @@
 (() => {
   class MessageRouter {
-    constructor({ snapshotCollector, fieldValueApplier }) {
+    constructor({ snapshotCollector, fieldValueApplier, pagePreparers = [] }) {
       this.snapshotCollector = snapshotCollector;
       this.fieldValueApplier = fieldValueApplier;
+      this.pagePreparers = pagePreparers;
       this.listener = this.handleMessage.bind(this);
     }
 
     register() {
       chrome.runtime.onMessage.addListener(this.listener);
       return () => chrome.runtime.onMessage.removeListener(this.listener);
+    }
+
+    async runPagePreparers(payload) {
+      const results = [];
+      for (const preparer of this.pagePreparers ?? []) {
+        try {
+          if (!preparer || typeof preparer.prepare !== 'function') continue;
+          const result = await preparer.prepare(payload);
+          if (result) results.push(result);
+        } catch (error) {
+          console.error('Page preparer failed', error);
+          throw error;
+        }
+      }
+      return results;
     }
 
     handleMessage(message, sender, sendResponse) {
@@ -34,6 +50,18 @@
           console.error('APPLY_FIELD_VALUES failed', error, fields);
           sendResponse({ ok: false, error: error.message ?? 'Failed to apply fields.' });
         }
+        return true;
+      }
+
+      if (message.type === 'PREPARE_PAGE') {
+        (async () => {
+          try {
+            const results = await this.runPagePreparers(message.payload ?? {});
+            sendResponse({ ok: true, results });
+          } catch (error) {
+            sendResponse({ ok: false, error: error.message ?? 'Failed to prepare page.' });
+          }
+        })();
         return true;
       }
 
