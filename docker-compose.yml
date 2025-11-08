@@ -1,0 +1,177 @@
+version: '3.8'
+
+services:
+  # Frontend service
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: bobhack-frontend
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=https://api.aignite.pl
+    networks:
+      - bobhack-network
+
+  # Backend service
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: bobhack-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    networks:
+      - bobhack-network
+
+  # Dify PostgreSQL database
+  dify-db:
+    image: postgres:15-alpine
+    container_name: dify-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dify
+      POSTGRES_PASSWORD: dify_password_change_me
+      POSTGRES_DB: dify
+    volumes:
+      - dify-db-data:/var/lib/postgresql/data
+    networks:
+      - bobhack-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dify"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Dify Redis
+  dify-redis:
+    image: redis:7-alpine
+    container_name: dify-redis
+    restart: unless-stopped
+    volumes:
+      - dify-redis-data:/data
+    networks:
+      - bobhack-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Dify API service
+  dify-api:
+    image: langgenius/dify-api:latest
+    container_name: dify-api
+    restart: unless-stopped
+    environment:
+      # Mode
+      MODE: api
+      
+      # Database
+      DB_USERNAME: dify
+      DB_PASSWORD: dify_password_change_me
+      DB_HOST: dify-db
+      DB_PORT: 5432
+      DB_DATABASE: dify
+      
+      # Redis
+      REDIS_HOST: dify-redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      
+      # Storage
+      STORAGE_TYPE: local
+      STORAGE_LOCAL_PATH: /app/storage
+      
+      # Security - CHANGE THESE!
+      SECRET_KEY: your-secret-key-change-me
+      
+      # CORS
+      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl
+      WEB_API_CORS_ALLOW_ORIGINS: '*'
+    volumes:
+      - dify-api-storage:/app/storage
+    depends_on:
+      dify-db:
+        condition: service_healthy
+      dify-redis:
+        condition: service_healthy
+    networks:
+      - bobhack-network
+
+  # Dify Worker
+  dify-worker:
+    image: langgenius/dify-api:latest
+    container_name: dify-worker
+    restart: unless-stopped
+    environment:
+      # Mode
+      MODE: worker
+      
+      # Database
+      DB_USERNAME: dify
+      DB_PASSWORD: dify_password_change_me
+      DB_HOST: dify-db
+      DB_PORT: 5432
+      DB_DATABASE: dify
+      
+      # Redis
+      REDIS_HOST: dify-redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      
+      # Storage
+      STORAGE_TYPE: local
+      STORAGE_LOCAL_PATH: /app/storage
+      
+      # Security
+      SECRET_KEY: your-secret-key-change-me
+    volumes:
+      - dify-api-storage:/app/storage
+    depends_on:
+      dify-db:
+        condition: service_healthy
+      dify-redis:
+        condition: service_healthy
+    networks:
+      - bobhack-network
+
+  # Dify Web (Console)
+  dify-web:
+    image: langgenius/dify-web:latest
+    container_name: dify-web
+    restart: unless-stopped
+    environment:
+      CONSOLE_API_URL: https://dify.aignite.pl
+      APP_API_URL: https://dify.aignite.pl
+    depends_on:
+      - dify-api
+    networks:
+      - bobhack-network
+
+  # Cloudflare Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - bobhack-network
+    depends_on:
+      - frontend
+      - backend
+      - dify-web
+
+networks:
+  bobhack-network:
+    driver: bridge
+
+volumes:
+  dify-db-data:
+  dify-redis-data:
+  dify-api-storage:
+
