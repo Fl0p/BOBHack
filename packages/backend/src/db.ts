@@ -5,8 +5,8 @@ let pool: Pool;
 // Initialize database pool with environment variables
 export function initPool() {
   const dbConfig = {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
+    host: process.env.BACKEND_DB_HOST || 'localhost',
+    port: parseInt(process.env.BACKEND_DB_PORT || '5432'),
     user: process.env.BACKEND_DB_USER || 'bobhack',
     password: process.env.BACKEND_DB_PASSWORD,
     database: process.env.BACKEND_DB_NAME || 'bobhack',

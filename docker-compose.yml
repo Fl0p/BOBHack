@@ -21,11 +21,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3001
-      - DB_HOST=backend-db
-      - DB_PORT=5432
-      - DB_USER=${BACKEND_DB_USER:-bobhack}
-      - DB_PASSWORD=${BACKEND_DB_PASSWORD}
-      - DB_NAME=${BACKEND_DB_NAME:-bobhack}
+      - BACKEND_DB_HOST=backend-db
+      - BACKEND_DB_PORT=5432
+      - BACKEND_DB_USER=${BACKEND_DB_USER:-bobhack}
+      - BACKEND_DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - BACKEND_DB_NAME=${BACKEND_DB_NAME:-bobhack}
     depends_on:
       backend-db:
         condition: service_healthy
@@ -51,7 +51,7 @@ services:
     volumes:
       - backend-db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - bobhack-network
     healthcheck:
