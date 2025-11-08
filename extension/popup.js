@@ -10,6 +10,7 @@ const manualField = document.getElementById('manual-field');
 const productInput = document.getElementById('productId');
 const manualInput = document.getElementById('manualInput');
 const manualToggle = document.getElementById('manualToggle');
+const manualMicButton = document.getElementById('manualMicButton');
 
 const updateStatus = (text) => {
   statusEl.textContent = text;
@@ -58,6 +59,45 @@ initManualMode();
 const getActiveTabId = async () => {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   return tabs[0]?.id ?? null;
+};
+
+const simulateOptionKeyPress = async () => {
+  const scripting = chrome?.scripting;
+  if (!scripting?.executeScript) {
+    updateStatus('Simulating Option key is not supported in this browser.');
+    return;
+  }
+
+  const tabId = await getActiveTabId();
+  if (!tabId) {
+    updateStatus('Active tab not found.');
+    return;
+  }
+
+  try {
+    await scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        const target = document.activeElement ?? document.body;
+        const createEvent = (type, altKey) =>
+          new KeyboardEvent(type, {
+            key: 'Alt',
+            code: 'AltLeft',
+            keyCode: 18,
+            which: 18,
+            altKey,
+            bubbles: true,
+            cancelable: true
+          });
+        target.dispatchEvent(createEvent('keydown', true));
+        target.dispatchEvent(createEvent('keyup', false));
+      }
+    });
+    updateStatus('Option key sent to the active tab.');
+  } catch (error) {
+    console.error('Failed to simulate Option key', error);
+    updateStatus('Failed to simulate Option key press.');
+  }
 };
 
 const sendMessageToTab = (tabId, message) =>
@@ -129,6 +169,13 @@ manualToggle.addEventListener('change', () => {
   applyManualMode(manualMode);
   saveManualMode(manualMode).catch(() => {});
   updateStatus('');
+});
+
+manualMicButton?.addEventListener('click', () => {
+  simulateOptionKeyPress().catch((error) => {
+    console.error('Unexpected error when simulating Option key', error);
+    updateStatus('Failed to simulate Option key press.');
+  });
 });
 
 form.addEventListener('submit', (event) => {

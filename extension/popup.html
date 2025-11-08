@@ -33,6 +33,38 @@
       textarea {
         resize: vertical;
       }
+      .manual-input-wrapper {
+        position: relative;
+      }
+      .manual-input-text {
+        padding-right: 40px;
+      }
+      .manual-mic-button {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        border: none;
+        background: rgba(0, 0, 0, 0.04);
+        border-radius: 50%;
+        padding: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s ease;
+      }
+      .manual-mic-button:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .manual-mic-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .manual-mic-button svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
       .checkbox {
         display: flex;
         align-items: center;
@@ -70,7 +102,28 @@
 
       <div class="field hidden" id="manual-field">
         <label for="manualInput">Manual Input</label>
-        <textarea id="manualInput" name="manualInput" rows="4" placeholder="Paste manual payload"></textarea>
+        <div class="manual-input-wrapper">
+          <textarea
+            id="manualInput"
+            class="manual-input-text"
+            name="manualInput"
+            rows="4"
+            placeholder="Paste manual payload"
+          ></textarea>
+          <button
+            id="manualMicButton"
+            class="manual-mic-button"
+            type="button"
+            title="Simulate Option key"
+            aria-label="Simulate Option key"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <button id="run" type="submit">Fill Form</button>
