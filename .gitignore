@@ -21,3 +21,6 @@ dist
 
 # ignore gitpmoji directory
 .gitpmoji
+
+# ignore .cursorignore
+.cursorignore
