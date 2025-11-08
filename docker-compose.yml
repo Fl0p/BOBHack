@@ -406,6 +406,7 @@ services:
     image: langgenius/dify-plugin-daemon:0.3.3-local
     container_name: dify-plugin-daemon
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
       # Database
       DB_USERNAME: ${DB_USERNAME:-dify}
