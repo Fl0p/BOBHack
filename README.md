@@ -1,5 +1,7 @@
 # BOBHack
 
+Back Office Operations Bot Solution
+
 ## Stack
 - Yarn 4.10.3 with workspaces
 - Backend: Node.js + Express
