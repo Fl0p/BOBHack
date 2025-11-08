@@ -9,10 +9,44 @@
         margin: 16px;
         min-width: 240px;
       }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      input[type='text'],
+      textarea {
+        font-size: 13px;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      textarea {
+        resize: vertical;
+      }
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+      }
       button {
         width: 100%;
         padding: 8px;
         font-size: 14px;
+      }
+      .hidden {
+        display: none;
       }
       #status {
         margin-top: 12px;
@@ -23,7 +57,24 @@
     </style>
   </head>
   <body>
-    <button id="run">Fill Form</button>
+    <form id="form">
+      <div class="field" id="product-field">
+        <label for="productId">Product ID</label>
+        <input type="text" id="productId" name="productId" placeholder="Enter product ID" value="1234" />
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" id="manualToggle" name="manualToggle" />
+        Manual Input
+      </label>
+
+      <div class="field hidden" id="manual-field">
+        <label for="manualInput">Manual Input</label>
+        <textarea id="manualInput" name="manualInput" rows="4" placeholder="Paste manual payload"></textarea>
+      </div>
+
+      <button id="run" type="submit">Fill Form</button>
+    </form>
     <div id="status"></div>
     <script type="module" src="popup.js"></script>
   </body>

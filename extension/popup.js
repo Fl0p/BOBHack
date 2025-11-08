@@ -1,10 +1,22 @@
 import { MESSAGE_TYPES } from './src/common/messageTypes.js';
 
-const button = document.getElementById('run');
+const form = document.getElementById('form');
+const runButton = document.getElementById('run');
 const statusEl = document.getElementById('status');
+const productField = document.getElementById('product-field');
+const manualField = document.getElementById('manual-field');
+const productInput = document.getElementById('productId');
+const manualInput = document.getElementById('manualInput');
+const manualToggle = document.getElementById('manualToggle');
 
 const updateStatus = (text) => {
   statusEl.textContent = text;
+};
+
+const toggleManualMode = () => {
+  const manualMode = manualToggle.checked;
+  productField.classList.toggle('hidden', manualMode);
+  manualField.classList.toggle('hidden', !manualMode);
 };
 
 const getActiveTabId = async () => {
@@ -34,7 +46,7 @@ const sendMessageToBackground = (message) =>
     });
   });
 
-const runAutomation = async () => {
+const runAutomation = async ({ manualMode, productId, manualData }) => {
   updateStatus('Collecting DOM...');
 
   const tabId = await getActiveTabId();
@@ -61,7 +73,10 @@ const runAutomation = async () => {
     type: MESSAGE_TYPES.PROCESS_DOM,
     payload: {
       domSnapshot: domResponse.domSnapshot,
-      tabId
+      tabId,
+      productId: manualMode ? null : productId,
+      manualInput: manualMode ? manualData : null,
+      manualMode
     }
   });
 
@@ -73,9 +88,37 @@ const runAutomation = async () => {
   updateStatus('Completed. Check the page.');
 };
 
-button.addEventListener('click', () => {
-  runAutomation().catch((error) => {
-    updateStatus(error?.message ?? 'Unexpected error.');
-  });
+manualToggle.addEventListener('change', () => {
+  toggleManualMode();
+  updateStatus('');
 });
 
+toggleManualMode();
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const manualMode = manualToggle.checked;
+  const productId = productInput.value.trim();
+  const manualData = manualInput.value.trim();
+
+  if (manualMode) {
+    if (!manualData) {
+      updateStatus('Manual input is required.');
+      return;
+    }
+  } else if (!productId) {
+    updateStatus('Product ID is required.');
+    return;
+  }
+
+  runButton.disabled = true;
+  updateStatus('');
+
+  runAutomation({ manualMode, productId, manualData })
+    .catch((error) => {
+      updateStatus(error?.message ?? 'Unexpected error.');
+    })
+    .finally(() => {
+      runButton.disabled = false;
+    });
+});

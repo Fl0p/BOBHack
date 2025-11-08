@@ -23,10 +23,11 @@ export const createProcessDomSnapshot = ({
   if (typeof extract !== 'function') throw new Error('extractFields must be provided.');
   if (typeof applyToTab !== 'function') throw new Error('applyFieldsToTab must be provided.');
 
-  return async ({ domSnapshot, tabId }) => {
+  return async (params) => {
+    const { domSnapshot, tabId } = params ?? {};
     validatePayload({ domSnapshot, tabId });
 
-    const payload = createPayload(domSnapshot);
+    const payload = createPayload(params ?? {});
     const difyResponse = await postPayload(payload);
     const fields = extract(difyResponse);
 
