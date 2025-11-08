@@ -66,7 +66,8 @@ services:
     environment:
       # Mode
       MODE: api
-      
+      # DISABLE MARKETPLACE & PLUGINS
+      MARKETPLACE_ENABLED: "false"
       # URLs (all on same domain now)
       CONSOLE_API_URL: ${DIFY_URL}
       CONSOLE_WEB_URL: ${DIFY_URL}
@@ -112,9 +113,10 @@ services:
       COOKIE_SECURE: true
       
       # Proxy settings for Cloudflare Tunnel
-      HTTP_X_FORWARDED_FOR: true
-      HTTP_X_FORWARDED_PROTO: https
-      HTTP_X_FORWARDED_HOST: ${DIFY_URL}
+      PREFERRED_URL_SCHEME: https
+      HTTP_X_FORWARDED_FOR: 1
+      HTTP_X_FORWARDED_PROTO: 1
+      HTTP_X_FORWARDED_HOST: ${DIFY_HOST}
       
       # Logging
       LOG_LEVEL: INFO
