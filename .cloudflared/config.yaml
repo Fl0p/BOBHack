@@ -8,10 +8,45 @@ ingress:
   - hostname: api.aignite.pl
     service: http://backend:3001
 
+  # Dify API endpoints (must be before web to match paths first)
+  - hostname: dify.aignite.pl
+    path: /console/api/*
+    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      httpHostHeader: dify.aignite.pl
+
+  - hostname: dify.aignite.pl
+    path: /api/*
+    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      httpHostHeader: dify.aignite.pl
+
+  - hostname: dify.aignite.pl
+    path: /v1/*
+    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      httpHostHeader: dify.aignite.pl
+
+  - hostname: dify.aignite.pl
+    path: /files/*
+    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      httpHostHeader: dify.aignite.pl
+
+  # Dify Web (catch-all for this hostname)
   - hostname: dify.aignite.pl
     service: http://dify-web:3000
-
-  - hostname: dify-api.aignite.pl
-    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      httpHostHeader: dify.aignite.pl
 
   - service: http_status:404
