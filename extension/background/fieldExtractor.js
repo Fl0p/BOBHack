@@ -1,21 +1,23 @@
-const toArray = (value) => (Array.isArray(value) ? value : []);
-
-export const extractFields = (payload) => {
-  if (!payload) return [];
-  if (Array.isArray(payload)) return payload;
-
-  const fallbackOrder = [
-    payload.fields,
-    payload.result?.fields,
-    payload.data?.fields,
-    payload.outputs
-  ];
-
-  for (const candidate of fallbackOrder) {
-    const fields = toArray(candidate);
-    if (fields.length) return fields;
+const parseJson = (value) => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
   }
-
-  return [];
 };
 
+export const extractFields = (payload) => {
+  payload = payload.data.outputs.json_data;
+
+  console.log('matched fields', JSON.parse(payload));
+  if (!payload) return [];
+
+  const jsonString = typeof payload === 'string' ? payload : payload.json_data;
+  if (typeof jsonString !== 'string') return [];
+
+  const parsed = parseJson(jsonString);
+  if (!parsed) return [];
+
+  const fields = parsed?.result?.fields ?? parsed?.fields;
+  return Array.isArray(fields) ? fields : [];
+};

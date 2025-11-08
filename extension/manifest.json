@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Dify Autofill Skeleton",
+  "name": "BOOBS",
   "version": "0.1.0",
-  "description": "Skeleton extension to collect page DOM and autofill inputs using a Dify backend.",
+  "description": "Back Office Operations Bot Solution",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Dify Autofill"
