@@ -20,12 +20,30 @@ This setup includes:
 
 1. Go to Cloudflare Zero Trust Dashboard
 2. Navigate to Access → Tunnels
-3. Create a new tunnel
-4. Configure public hostnames:
-   - `bob.aignite.pl` → `http://frontend:80`
-   - `api.aignite.pl` → `http://backend:3001`
-   - `dify.aignite.pl` → `http://dify-web:3000`
-5. Copy the tunnel token
+3. Create a new tunnel (or use existing tunnel "aignite-local")
+4. Download the tunnel credentials JSON file
+5. Place the credentials file in `.cloudflared/` directory
+6. Update `.cloudflared/config.yaml` with your credentials filename:
+   ```yaml
+   tunnel: aignite-local
+   credentials-file: /etc/cloudflared/YOUR-TUNNEL-ID.json
+
+   ingress:
+     - hostname: bob.aignite.pl
+       service: http://frontend:80
+     - hostname: api.aignite.pl
+       service: http://backend:3001
+     - hostname: dify.aignite.pl
+       service: http://dify-web:3000
+     - hostname: dify-api.aignite.pl
+       service: http://dify-api:5001
+     - service: http_status:404
+   ```
+7. The configuration supports:
+   - `bob.aignite.pl` → Frontend (React app)
+   - `api.aignite.pl` → Backend (Express API)
+   - `dify.aignite.pl` → Dify Web Console
+   - `dify-api.aignite.pl` → Dify API (direct access)
 
 ### 2. environment configuration
 
@@ -38,16 +56,30 @@ nano .env
 ```
 
 Required variables:
-- `CLOUDFLARE_TUNNEL_TOKEN` - from Cloudflare dashboard
+- `BACKEND_URL` - backend API URL (e.g., https://api.aignite.pl)
 - `DIFY_SECRET_KEY` - generate strong random key
 - `DIFY_DB_PASSWORD` - generate strong password
 
 ### 3. update frontend api url
 
-Edit `packages/frontend/Dockerfile` if needed to set correct API URL:
-```dockerfile
-ENV VITE_API_URL=https://api.aignite.pl
+The frontend API URL is configured via the `BACKEND_URL` environment variable in `.env`:
+```env
+BACKEND_URL=https://api.aignite.pl
 ```
+
+This value is passed as a build argument in `docker-compose.yml`:
+```yaml
+frontend:
+  build:
+    args:
+      - VITE_API_URL=${BACKEND_URL}
+```
+
+To change the API URL:
+1. Edit `.env` and update the `BACKEND_URL` variable
+2. Rebuild the frontend container: `docker-compose build frontend`
+
+**Note**: In development mode (without Docker), the frontend uses Vite proxy and connects to `http://localhost:3001`. The `BACKEND_URL` environment variable is only needed for production builds.
 
 ### 4. build and run
 
@@ -138,8 +170,8 @@ docker-compose exec dify-db psql -U dify -d dify
 # check tunnel logs
 docker-compose logs cloudflared
 
-# verify tunnel token is set
-docker-compose exec cloudflared env | grep TUNNEL_TOKEN
+# verify credentials file exists
+docker-compose exec cloudflared ls -la /etc/cloudflared/
 ```
 
 ### reset dify data

@@ -34,7 +34,10 @@ BOBHack/
 │   └── frontend/          # React application
 │       ├── Dockerfile     # Frontend container configuration
 │       ├── nginx.conf     # Production web server config
+│       ├── vite-env.d.ts  # TypeScript env variable types
 │       └── src/           # Frontend source code
+├── .cloudflared/          # Cloudflare Tunnel configuration
+│   └── config.yaml        # Tunnel routing and ingress rules
 ├── docs/                  # Documentation
 ├── docker-compose.yml     # Multi-service orchestration
 ├── .dockerignore          # Docker build exclusions

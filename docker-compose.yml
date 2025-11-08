@@ -4,10 +4,10 @@ services:
     build:
       context: ./packages/frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${BACKEND_URL}
     container_name: bobhack-frontend
     restart: unless-stopped
-    environment:
-      - VITE_API_URL=https://api.aignite.pl
     networks:
       - bobhack-network
 
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: dify
-      POSTGRES_PASSWORD: dify_password_change_me
+      POSTGRES_PASSWORD: ${DIFY_DB_PASSWORD}
       POSTGRES_DB: dify
     volumes:
       - dify-db-data:/var/lib/postgresql/data
@@ -69,7 +69,7 @@ services:
       
       # Database
       DB_USERNAME: dify
-      DB_PASSWORD: dify_password_change_me
+      DB_PASSWORD: ${DIFY_DB_PASSWORD}
       DB_HOST: dify-db
       DB_PORT: 5432
       DB_DATABASE: dify
@@ -84,10 +84,10 @@ services:
       STORAGE_LOCAL_PATH: /app/storage
       
       # Security - CHANGE THESE!
-      SECRET_KEY: your-secret-key-change-me
+      SECRET_KEY: ${DIFY_SECRET_KEY}
       
       # CORS
-      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl
+      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl,https://dify-api.aignite.pl
       WEB_API_CORS_ALLOW_ORIGINS: '*'
     volumes:
       - dify-api-storage:/app/storage
@@ -110,7 +110,7 @@ services:
       
       # Database
       DB_USERNAME: dify
-      DB_PASSWORD: dify_password_change_me
+      DB_PASSWORD: ${DIFY_DB_PASSWORD}
       DB_HOST: dify-db
       DB_PORT: 5432
       DB_DATABASE: dify
@@ -125,7 +125,7 @@ services:
       STORAGE_LOCAL_PATH: /app/storage
       
       # Security
-      SECRET_KEY: your-secret-key-change-me
+      SECRET_KEY: ${DIFY_SECRET_KEY}
     volumes:
       - dify-api-storage:/app/storage
     depends_on:
@@ -142,8 +142,8 @@ services:
     container_name: dify-web
     restart: unless-stopped
     environment:
-      CONSOLE_API_URL: https://dify.aignite.pl
-      APP_API_URL: https://dify.aignite.pl
+      CONSOLE_API_URL: https://dify-api.aignite.pl
+      APP_API_URL: https://dify-api.aignite.pl
     depends_on:
       - dify-api
     networks:
