@@ -16,5 +16,8 @@ dist
 .env.local
 !.env.example
 
+# Cloudflare tunnel credentials
+.cloudflared/*.json
+
 # ignore gitpmoji directory
 .gitpmoji
