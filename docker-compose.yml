@@ -67,6 +67,14 @@ services:
       # Mode
       MODE: api
       
+      # URLs (all on same domain now)
+      CONSOLE_API_URL: ${DIFY_URL}
+      CONSOLE_WEB_URL: ${DIFY_URL}
+      SERVICE_API_URL: ${DIFY_URL}
+      APP_API_URL: ${DIFY_URL}
+      APP_WEB_URL: ${DIFY_URL}
+      FILES_URL: ${DIFY_URL}
+      
       # Database
       DB_USERNAME: dify
       DB_PASSWORD: ${DIFY_DB_PASSWORD}
@@ -78,17 +86,40 @@ services:
       REDIS_HOST: dify-redis
       REDIS_PORT: 6379
       REDIS_DB: 0
+      REDIS_PASSWORD: ''
       
       # Storage
       STORAGE_TYPE: local
       STORAGE_LOCAL_PATH: /app/storage
       
-      # Security - CHANGE THESE!
+      # Security
       SECRET_KEY: ${DIFY_SECRET_KEY}
       
-      # CORS
-      CONSOLE_CORS_ALLOW_ORIGINS: https://dify.aignite.pl,https://dify-api.aignite.pl
+      # Migration
+      MIGRATION_ENABLED: ${DIFY_MIGRATION_ENABLED}
+      
+      # CORS (same domain, no CORS issues)
+      CONSOLE_CORS_ALLOW_ORIGINS: ${DIFY_URL}
       WEB_API_CORS_ALLOW_ORIGINS: '*'
+      
+      # Session & Cookies
+      SESSION_TYPE: redis
+      SESSION_PERMANENT: true
+      SESSION_USE_SIGNER: true
+      PERMANENT_SESSION_LIFETIME: 86400
+      COOKIE_HTTPONLY: true
+      COOKIE_SAMESITE: Lax
+      COOKIE_SECURE: true
+      
+      # Proxy settings for Cloudflare Tunnel
+      HTTP_X_FORWARDED_FOR: true
+      HTTP_X_FORWARDED_PROTO: https
+      HTTP_X_FORWARDED_HOST: ${DIFY_URL}
+      
+      # Logging
+      LOG_LEVEL: INFO
+      DEBUG: false
+      FLASK_DEBUG: false
     volumes:
       - dify-api-storage:/app/storage
     depends_on:
@@ -142,8 +173,10 @@ services:
     container_name: dify-web
     restart: unless-stopped
     environment:
-      CONSOLE_API_URL: https://dify-api.aignite.pl
-      APP_API_URL: https://dify-api.aignite.pl
+      EDITION: SELF_HOSTED
+      CONSOLE_API_URL: ${DIFY_URL}
+      APP_API_URL: ${DIFY_URL}
+      CONSOLE_WEB_URL: ${DIFY_URL}
     depends_on:
       - dify-api
     networks:
