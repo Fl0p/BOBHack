@@ -33,6 +33,7 @@
         "content/cssPathBuilder.js",
         "content/domSnapshotCollector.js",
         "content/elementValueSetter.js",
+        "sites/olx/elementValueEnhancer.js",
         "content/fieldValueApplier.js",
         "sites/olx/prefillService.js",
         "sites/allegrolokalnie/prefillService.js",
