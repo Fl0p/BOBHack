@@ -24,9 +24,6 @@ function App() {
           <p className="hero-subtitle">
             Automate routine back-office operations with intelligent bots
           </p>
-          <div className="hero-status">
-            <span className="status-badge">{message || 'Connecting...'}</span>
-          </div>
         </div>
       </header>
 
@@ -68,6 +65,13 @@ function App() {
           and reduces the likelihood of errors in operational processes.
         </p>
       </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-status">
+          <span className="status-badge">{message || 'Connecting...'}</span>
+        </div>
+      </footer>
     </div>
   );
 }

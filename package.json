@@ -9,7 +9,9 @@
   "scripts": {
     "dev:backend": "yarn workspace backend dev",
     "dev:frontend": "yarn workspace frontend dev",
-    "dev": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\""
+    "dev:db": "docker compose up backend-db -d",
+    "dev:db:stop": "docker compose stop backend-db",
+    "dev": "yarn dev:db && concurrently \"yarn dev:backend\" \"yarn dev:frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
