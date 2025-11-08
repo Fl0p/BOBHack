@@ -18,6 +18,9 @@ jobs:
     - name: Create .env file
       run: echo '${{ secrets.ENV_FILE }}' > .env
       
+    - name: Create client_secret.json
+      run: echo '${{ secrets.GOOGLE_CLIENT_SECRET }}' > client_secret.json
+      
     - name: Create cloudflared directory
       run: mkdir -p .cloudflared
       
