@@ -10,6 +10,7 @@
     ['ElementValueSetter', bobNamespace.ElementValueSetter],
     ['FieldValueApplier', bobNamespace.FieldValueApplier],
     ['OlxPrefillService', bobNamespace.OlxPrefillService],
+    ['AllegroLokalniePrefillService', bobNamespace.AllegroLokalniePrefillService],
     ['MessageRouter', bobNamespace.MessageRouter]
   ];
 
@@ -37,9 +38,21 @@
         elementValueSetter: instances.elementValueSetter
       });
 
+    if (!instances.allegroLokalniePrefillService)
+      instances.allegroLokalniePrefillService =
+        new bobNamespace.AllegroLokalniePrefillService({
+          elementValueSetter: instances.elementValueSetter
+        });
+
     const pagePreparers = bobNamespace.pagePreparers ?? [];
     if (instances.olxPrefillService && !pagePreparers.includes(instances.olxPrefillService)) {
       pagePreparers.push(instances.olxPrefillService);
+    }
+    if (
+      instances.allegroLokalniePrefillService &&
+      !pagePreparers.includes(instances.allegroLokalniePrefillService)
+    ) {
+      pagePreparers.push(instances.allegroLokalniePrefillService);
     }
 
     bobNamespace.instances = instances;

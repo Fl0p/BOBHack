@@ -7,9 +7,15 @@
     }
 
     collect() {
-      const elements = Array.from(document.querySelectorAll('input, textarea, select')).filter((element) =>
-        this.isCollectable(element)
-      );
+      const selectors = [
+        'input',
+        'textarea',
+        'select',
+        'div[contenteditable="true"]',
+        'div[contenteditable="true"] p'
+      ];
+      const candidates = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)));
+      const elements = Array.from(new Set(candidates)).filter((element) => this.isCollectable(element));
       const fields = elements.map((element) => this.mapElement(element));
       return {
         url: window.location.href,

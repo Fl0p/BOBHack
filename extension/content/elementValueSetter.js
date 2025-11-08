@@ -7,16 +7,25 @@
   class ElementValueSetter {
     setValue(element, value) {
       if (!element) return;
-      const tag = element.tagName.toLowerCase();
-      if (tag === 'select') {
-        this.setSelectValue(element, value);
-      } else if (tag === 'input') {
-        this.setInputValue(element, value);
-      } else if (tag === 'textarea') {
-        element.value = value;
+      if (element.isContentEditable) {
+        this.setContentEditableValue(element, value);
+      } else {
+        const tag = element.tagName.toLowerCase();
+        if (tag === 'select') {
+          this.setSelectValue(element, value);
+        } else if (tag === 'input') {
+          this.setInputValue(element, value);
+        } else if (tag === 'textarea') {
+          element.value = value;
+        }
       }
       element.dispatchEvent(new Event('input', { bubbles: true }));
       element.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    setContentEditableValue(element, value) {
+      const normalized = value ?? '';
+      element.textContent = Array.isArray(normalized) ? normalized.join(' ') : String(normalized);
     }
 
     setSelectValue(element, value) {
