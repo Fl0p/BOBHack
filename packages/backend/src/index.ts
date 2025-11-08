@@ -19,7 +19,7 @@ import cors from 'cors';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { OAuth2Client } from 'google-auth-library';
-import { initPool, getPool, initializeDatabase } from './db.js';
+import { initPool, getPool, initializeDatabase, initializeRetailSchema } from './db.js';
 
 // Load Google OAuth credentials
 // In Docker: /app/client_secret.json, in dev: ../../../client_secret.json
@@ -192,6 +192,7 @@ async function startServer() {
   try {
     initPool();
     await initializeDatabase();
+    await initializeRetailSchema();
     
     app.listen(PORT, () => {
       console.log(`🚀 Backend server running on http://localhost:${PORT}`);
