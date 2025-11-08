@@ -27,6 +27,7 @@ Welcome to the BOBHack project documentation!
 ### Deployment
 - [Docker Setup Guide](./docker-setup.md)
 - [CI/CD Pipeline](./ci-cd.md)
+- [Database Access](./database-access.md)
 
 ### Extension
 - [Browser Extension](./extension/README.md)

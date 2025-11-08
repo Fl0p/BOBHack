@@ -16,6 +16,13 @@ ingress:
       noTLSVerify: true
       connectTimeout: 30s
 
+  # BOBHack Backend Database (PostgreSQL) - DEV ONLY
+  - hostname: db.aignite.pl
+    service: tcp://backend-db:5432
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+
   # ============================================================================
   # Dify API Endpoints (must be before web to match paths first)
   # ============================================================================
