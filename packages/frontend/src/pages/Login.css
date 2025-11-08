@@ -1,0 +1,47 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.login-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2.5rem;
+}
+
+.login-google {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.login-info {
+  font-size: 0.9rem;
+  color: #999;
+  line-height: 1.6;
+}
+

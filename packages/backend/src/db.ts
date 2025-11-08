@@ -40,10 +40,29 @@ export async function initializeDatabase(): Promise<void> {
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
+        google_id VARCHAR(255),
+        picture TEXT,
+        last_login TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    
+    console.log('Users table created/verified!');
+    
+    // Add OAuth columns if they don't exist (migration for existing tables)
+    console.log('Running OAuth columns migration...');
+    try {
+      await client.query(`
+        ALTER TABLE users 
+        ADD COLUMN IF NOT EXISTS google_id VARCHAR(255),
+        ADD COLUMN IF NOT EXISTS picture TEXT,
+        ADD COLUMN IF NOT EXISTS last_login TIMESTAMP
+      `);
+      console.log('✅ OAuth columns migration completed!');
+    } catch (migrationError) {
+      console.log('⚠️  OAuth columns migration skipped (columns may already exist)');
+    }
     
     console.log('Users table is ready!');
     

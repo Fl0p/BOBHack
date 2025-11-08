@@ -1,78 +1,29 @@
-import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthProvider } from './contexts/AuthContext';
+import { Header } from './components/Header';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
 import './App.css';
 
+// Google Client ID from client_secret.json
+const GOOGLE_CLIENT_ID = '850281472355-q3pdt0o2t34rs4ng980nfs97bdir0i9f.apps.googleusercontent.com';
+
 function App() {
-  const [message, setMessage] = useState<string>('');
-
-  useEffect(() => {
-    // Use environment variable for API URL, fallback to /api for dev
-    const apiUrl = import.meta.env.VITE_API_URL || '';
-    fetch(`${apiUrl}/api/hello`)
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error('Error:', err));
-  }, []);
-
   return (
-    <div className="App">
-      {/* Hero Section */}
-      <header className="hero">
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Back Office Operations Bot Solution
-          </h1>
-          <p className="hero-subtitle">
-            Automate routine back-office operations with intelligent bots
-          </p>
-        </div>
-      </header>
-
-      {/* Features Section */}
-      <section className="features">
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon">🤖</div>
-            <h3>AI-Powered Automation</h3>
-            <p>Intelligent bots for automating repetitive tasks</p>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <Router>
+          <div className="App">
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
           </div>
-          
-          <div className="feature-card">
-            <div className="feature-icon">⚡</div>
-            <h3>Fast Processing</h3>
-            <p>Instant request processing and real-time operations</p>
-          </div>
-          
-          <div className="feature-card">
-            <div className="feature-icon">🔒</div>
-            <h3>Secure & Reliable</h3>
-            <p>Secure data storage and reliable system operation</p>
-          </div>
-          
-          <div className="feature-card">
-            <div className="feature-icon">📊</div>
-            <h3>Analytics Dashboard</h3>
-            <p>Detailed analytics and monitoring of all operations</p>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="about">
-        <h2>About the Solution</h2>
-        <p>
-          BOOB Solution is a modern platform for automating back-office operations. 
-          The system helps automate routine tasks, improves work efficiency, 
-          and reduces the likelihood of errors in operational processes.
-        </p>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-status">
-          <span className="status-badge">{message || 'Connecting...'}</span>
-        </div>
-      </footer>
-    </div>
+        </Router>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -1,0 +1,6 @@
+-- Add OAuth columns to users table
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS google_id VARCHAR(255),
+ADD COLUMN IF NOT EXISTS picture TEXT,
+ADD COLUMN IF NOT EXISTS last_login TIMESTAMP;
+

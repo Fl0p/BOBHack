@@ -16,6 +16,9 @@ dist
 .env.local
 !.env.example
 
+# Google client secret
+client_secret.json
+
 # Cloudflare tunnel credentials
 .cloudflared/*.json
 
