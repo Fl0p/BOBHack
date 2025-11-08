@@ -100,7 +100,7 @@ Provide a summary of:
 - Update cross-references between documentation files
 - Ensure all new API endpoints have examples
 - Keep README.md index files up to date with new documentation
-- **Documentation is in Russian language** - write all documentation content in Russian
+- **Documentation is in English language** - write all documentation content in English
 - **File naming convention**:
   - Index files MUST be named `README.md` (uppercase)
   - All other documentation files MUST be lowercase (e.g., `api-endpoints.md`, `components.md`, `vite-configuration.md`)
