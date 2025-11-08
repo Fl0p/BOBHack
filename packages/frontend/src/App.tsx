@@ -5,7 +5,9 @@ function App() {
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
-    fetch('/api/hello')
+    // Use environment variable for API URL, fallback to /api for dev
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    fetch(`${apiUrl}/api/hello`)
       .then(res => res.json())
       .then(data => setMessage(data.message))
       .catch(err => console.error('Error:', err));

@@ -4,10 +4,10 @@ services:
     build:
       context: ./packages/frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://api.aignite.pl
     container_name: bobhack-frontend
     restart: unless-stopped
-    environment:
-      - VITE_API_URL=https://api.aignite.pl
     networks:
       - bobhack-network
 
@@ -164,9 +164,6 @@ services:
       - backend
       - dify-web
       - dify-api
-    sysctls:
-      - net.core.rmem_max=7500000
-      - net.core.wmem_max=7500000
 
 networks:
   bobhack-network:
