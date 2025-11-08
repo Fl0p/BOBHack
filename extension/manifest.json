@@ -13,7 +13,8 @@
     "storage"
   ],
   "host_permissions": [
-    "https://your-dify-endpoint.example.com/*"
+    "https://your-dify-endpoint.example.com/*",
+    "http://localhost/*"
   ],
   "background": {
     "service_worker": "background/index.js",

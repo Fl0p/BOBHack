@@ -12,17 +12,32 @@
     }
 
     handleMessage(message, sender, sendResponse) {
-      if (!message?.type) return;
+      if (!message?.type) return false;
+
       if (message.type === 'COLLECT_DOM') {
-        const domSnapshot = this.snapshotCollector.collect();
-        sendResponse({ domSnapshot });
-        return;
+        try {
+          const domSnapshot = this.snapshotCollector.collect();
+          sendResponse({ domSnapshot });
+        } catch (error) {
+          console.error('COLLECT_DOM failed', error);
+          sendResponse({ ok: false, error: error.message ?? 'Failed to collect DOM.' });
+        }
+        return true;
       }
+
       if (message.type === 'APPLY_FIELD_VALUES') {
         const fields = message.payload?.fields ?? [];
-        this.fieldValueApplier.apply(fields);
-        sendResponse({ ok: true });
+        try {
+          this.fieldValueApplier.apply(fields);
+          sendResponse({ ok: true });
+        } catch (error) {
+          console.error('APPLY_FIELD_VALUES failed', error, fields);
+          sendResponse({ ok: false, error: error.message ?? 'Failed to apply fields.' });
+        }
+        return true;
       }
+
+      return false;
     }
   }
 

@@ -23,6 +23,9 @@ export const processDomSnapshot = async ({ domSnapshot, tabId }) => {
     throw new Error('Dify response does not contain fields.');
   }
 
-  await applyFieldsToTab(tabId, fields);
+  const applyResult = await applyFieldsToTab(tabId, fields);
+  if (!applyResult?.ok) {
+    throw new Error(applyResult?.error ?? 'Content script failed to apply fields.');
+  }
 };
 

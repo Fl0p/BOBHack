@@ -1,4 +1,9 @@
 (() => {
+  const toComparableString = (input) => {
+    if (input === null || input === undefined) return '';
+    return String(input);
+  };
+
   class ElementValueSetter {
     setValue(element, value) {
       if (!element) return;
@@ -15,21 +20,48 @@
     }
 
     setSelectValue(element, value) {
-      const option = Array.from(element.options).find((opt) => opt.value === value || opt.text === value);
-      if (option) element.value = option.value;
+      if (Array.isArray(value)) {
+        const desired = new Set(value.map(toComparableString));
+        Array.from(element.options).forEach((option) => {
+          const normalized = toComparableString(option.value);
+          const byText = toComparableString(option.text);
+          const matches = desired.has(normalized) || desired.has(byText);
+          option.selected = matches;
+        });
+        if (!element.multiple) {
+          const firstSelected = Array.from(element.options).find((option) => option.selected);
+          if (firstSelected) element.value = firstSelected.value;
+        }
+        return;
+      }
+      const target = toComparableString(value);
+      const match = Array.from(element.options).find(
+        (option) => option.value === target || toComparableString(option.text) === target
+      );
+      if (match) element.value = match.value;
     }
 
     setInputValue(element, value) {
       const type = element.type;
+      if (type === 'file') {
+        console.warn('Skipping file input assignment for security reasons.', element);
+        return;
+      }
       if (type === 'checkbox') {
-        element.checked = Boolean(value);
+        if (Array.isArray(value)) {
+          const desired = new Set(value.map(toComparableString));
+          const normalized = toComparableString(element.value);
+          element.checked = desired.has(normalized);
+        } else {
+          element.checked = Boolean(value);
+        }
         return;
       }
       if (type === 'radio') {
-        element.checked = element.value === value;
+        element.checked = toComparableString(element.value) === toComparableString(value);
         return;
       }
-      element.value = value;
+      element.value = value ?? '';
     }
   }
 

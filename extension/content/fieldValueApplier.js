@@ -7,14 +7,27 @@
     apply(fields) {
       (fields ?? []).forEach((field) => {
         if (!field || field.value === undefined) return;
-        const target = this.resolveTarget(field);
-        if (!target) return;
-        this.elementValueSetter.setValue(target, field.value);
+        const targets = this.resolveTargets(field);
+        if (!targets.length) return;
+        targets.forEach((target) => this.elementValueSetter.setValue(target, field.value));
       });
     }
 
-    resolveTarget(field) {
-      return this.resolveById(field.id) ?? this.resolveByName(field.name) ?? this.resolveByPath(field.path);
+    resolveTargets(field) {
+      const results = [];
+      const seen = new Set();
+      const push = (element) => {
+        if (!element) return;
+        if (seen.has(element)) return;
+        seen.add(element);
+        results.push(element);
+      };
+
+      push(this.resolveById(field.id));
+      this.resolveByName(field.name).forEach(push);
+      push(this.resolveByPath(field.path));
+
+      return results;
     }
 
     resolveById(id) {
@@ -23,11 +36,11 @@
     }
 
     resolveByName(name) {
-      if (!name) return null;
+      if (!name) return [];
       try {
-        return document.querySelector(`[name="${CSS.escape(name)}"]`);
+        return Array.from(document.querySelectorAll(`[name="${CSS.escape(name)}"]`));
       } catch (error) {
-        return null;
+        return [];
       }
     }
 
