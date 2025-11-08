@@ -32,13 +32,10 @@ export const createProcessDomSnapshot = ({
       ...payload,
       inputs: {
         ...payload.inputs,
-        dom: '[omitted dom]'
+        dom: domSnapshot
       }
     };
     console.log('Dify request payload', requestLog);
-
-    const difyResponse = await postPayload(payload);
-    console.log('Dify response payload', difyResponse?.data ?? difyResponse);
 
     const fields = extract(difyResponse);
     console.log('Dify extracted fields', fields);
