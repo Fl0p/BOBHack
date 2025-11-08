@@ -20,12 +20,30 @@ This setup includes:
 
 1. Go to Cloudflare Zero Trust Dashboard
 2. Navigate to Access → Tunnels
-3. Create a new tunnel
-4. Configure public hostnames:
-   - `bob.aignite.pl` → `http://frontend:80`
-   - `api.aignite.pl` → `http://backend:3001`
-   - `dify.aignite.pl` → `http://dify-web:3000`
-5. Copy the tunnel token
+3. Create a new tunnel (or use existing tunnel "aignite-local")
+4. Download the tunnel credentials JSON file
+5. Place the credentials file in `.cloudflared/` directory
+6. Update `.cloudflared/config.yaml` with your credentials filename:
+   ```yaml
+   tunnel: aignite-local
+   credentials-file: /etc/cloudflared/YOUR-TUNNEL-ID.json
+
+   ingress:
+     - hostname: bob.aignite.pl
+       service: http://frontend:80
+     - hostname: api.aignite.pl
+       service: http://backend:3001
+     - hostname: dify.aignite.pl
+       service: http://dify-web:3000
+     - hostname: dify-api.aignite.pl
+       service: http://dify-api:5001
+     - service: http_status:404
+   ```
+7. The configuration supports:
+   - `bob.aignite.pl` → Frontend (React app)
+   - `api.aignite.pl` → Backend (Express API)
+   - `dify.aignite.pl` → Dify Web Console
+   - `dify-api.aignite.pl` → Dify API (direct access)
 
 ### 2. environment configuration
 
@@ -44,10 +62,27 @@ Required variables:
 
 ### 3. update frontend api url
 
-Edit `packages/frontend/Dockerfile` if needed to set correct API URL:
-```dockerfile
-ENV VITE_API_URL=https://api.aignite.pl
+The frontend API URL is configured as a build argument in `docker-compose.yml`:
+```yaml
+frontend:
+  build:
+    context: ./packages/frontend
+    dockerfile: Dockerfile
+    args:
+      - VITE_API_URL=https://api.aignite.pl
 ```
+
+This value is then used during the Docker build in `packages/frontend/Dockerfile`:
+```dockerfile
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+```
+
+To change the API URL:
+1. Edit `docker-compose.yml` and update the `VITE_API_URL` build argument
+2. Rebuild the frontend container: `docker-compose build frontend`
+
+**Note**: In development mode (without Docker), the frontend uses Vite proxy and connects to `http://localhost:3001`. The `VITE_API_URL` environment variable is only needed for production builds.
 
 ### 4. build and run
 

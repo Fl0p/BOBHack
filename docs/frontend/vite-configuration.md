@@ -147,7 +147,7 @@ import { useFetch } from '@hooks/useFetch';
 
 ### Environment Variables
 
-Create a `.env` file:
+Create a `.env` file (optional for development):
 
 ```env
 VITE_API_URL=http://localhost:3001
@@ -156,11 +156,23 @@ VITE_APP_TITLE=BOBHack
 
 Usage in code:
 ```typescript
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || '';
 const title = import.meta.env.VITE_APP_TITLE;
+
+// Example: Dynamic API URL usage
+fetch(`${apiUrl}/api/endpoint`)
 ```
 
-**Important**: All variables must start with `VITE_` to be accessible in client code.
+**Important**:
+- All variables must start with `VITE_` to be accessible in client code
+- TypeScript types for env variables are defined in `vite-env.d.ts`:
+  ```typescript
+  interface ImportMetaEnv {
+    readonly VITE_API_URL?: string;
+  }
+  ```
+- In development, `VITE_API_URL` defaults to empty string (uses Vite proxy)
+- In production (Docker), `VITE_API_URL` is set during build via build argument
 
 ### Environment Files
 
