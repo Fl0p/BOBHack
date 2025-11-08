@@ -16,13 +16,13 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Create .env file
-      run: echo "${{ secrets.ENV_FILE }}" > .env
+      run: echo '${{ secrets.ENV_FILE }}' > .env
       
     - name: Create cloudflared directory
       run: mkdir -p .cloudflared
       
     - name: Create cloudflared credentials
-      run: echo "${{ secrets.CLOUDFLARED_CREDENTIALS }}" > .cloudflared/f3ae1442-62b0-4c23-8808-46c7e22dff72.json
+      run: echo '${{ secrets.CLOUDFLARED_CREDENTIALS }}' > .cloudflared/f3ae1442-62b0-4c23-8808-46c7e22dff72.json
       
     - name: Make scripts executable
       run: chmod +x scripts/rebuild-and-start.sh
