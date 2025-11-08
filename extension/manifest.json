@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Dify Autofill Skeleton",
+  "version": "0.1.0",
+  "description": "Skeleton extension to collect page DOM and autofill inputs using a Dify backend.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Dify Autofill"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://your-dify-endpoint.example.com/*"
+  ],
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "contentScript.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
