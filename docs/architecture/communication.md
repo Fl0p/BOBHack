@@ -1,11 +1,12 @@
-# Коммуникация между сервисами
+# Service Communication
 
-## Обзор
+## Overview
 
-Frontend и Backend общаются через HTTP API с использованием прокси-конфигурации Vite.
+Frontend and Backend communicate through HTTP API using Vite's proxy configuration in development, and through Cloudflare Tunnel in production.
 
-## Архитектура коммуникации
+## Communication Architecture
 
+### Development Mode
 ```
 ┌─────────────┐         ┌─────────────┐         ┌─────────────┐
 │   Browser   │ ───────→│ Vite Proxy  │ ───────→│   Express   │
@@ -13,9 +14,22 @@ Frontend и Backend общаются через HTTP API с использова
 └─────────────┘ ←─────── └─────────────┘ ←─────── └─────────────┘
 ```
 
-## Vite Proxy конфигурация
+### Production Mode (Docker)
+```
+┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
+│   Browser   │ ───────→│ Cloudflare       │ ───────→│   nginx     │
+│             │         │ Tunnel           │         │ (Frontend)  │
+│             │         │                  │         └─────────────┘
+│             │         │ bob.aignite.pl   │
+│             │         │ api.aignite.pl   │         ┌─────────────┐
+│             │         │ dify.aignite.pl  │ ───────→│   Express   │
+│             │         │                  │         │ (Backend)   │
+└─────────────┘ ←─────── └──────────────────┘ ←─────── └─────────────┘
+```
 
-В `packages/frontend/vite.config.ts`:
+## Vite Proxy Configuration
+
+In `packages/frontend/vite.config.ts`:
 
 ```typescript
 export default defineConfig({
@@ -31,43 +45,60 @@ export default defineConfig({
 });
 ```
 
-### Как это работает
+### How it Works
 
-1. Frontend делает запрос к `/api/hello`
-2. Vite перехватывает запрос и перенаправляет его на `http://localhost:3001/api/hello`
-3. Backend обрабатывает запрос и возвращает ответ
-4. Vite проксирует ответ обратно во Frontend
+1. Frontend makes a request to `/api/hello`
+2. Vite intercepts the request and forwards it to `http://localhost:3001/api/hello`
+3. Backend processes the request and returns a response
+4. Vite proxies the response back to the Frontend
 
 ## CORS
 
-Backend настроен с CORS middleware для разрешения cross-origin запросов:
+Backend is configured with CORS middleware to allow cross-origin requests:
 
 ```typescript
 import cors from 'cors';
 app.use(cors());
 ```
 
-Это необходимо для разработки, когда frontend и backend работают на разных портах.
+This is necessary for development when frontend and backend run on different ports.
 
-## Пример запроса
+## Request Example
 
-### Frontend код
+### Frontend Code
 ```typescript
 fetch('/api/hello')
   .then(res => res.json())
   .then(data => console.log(data))
 ```
 
-### Backend endpoint
+### Backend Endpoint
 ```typescript
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello World from Backend!' });
 });
 ```
 
-## Production соображения
+## Production Considerations
 
-В production окружении:
-- Frontend билдится в статические файлы
-- Backend может раздавать frontend статику
-- Или использовать отдельный веб-сервер (nginx) для frontend
+### Docker Deployment
+In production environment:
+- Frontend is built into static files and served by nginx
+- Backend runs as a Node.js Express server
+- Both are containerized separately
+- Cloudflare Tunnel routes traffic based on domain:
+  - `bob.aignite.pl` → Frontend (nginx on port 80)
+  - `api.aignite.pl` → Backend (Express on port 3001)
+  - `dify.aignite.pl` → Dify Web Console (port 3000)
+
+### Service Discovery
+Services communicate within Docker network:
+- Frontend container: `frontend:80`
+- Backend container: `backend:3001`
+- Dify API: `dify-api:5001`
+- Dify Web: `dify-web:3000`
+
+### Security
+- All external traffic goes through Cloudflare Tunnel (HTTPS)
+- Internal Docker network communication
+- CORS should be restricted to actual frontend domain in production

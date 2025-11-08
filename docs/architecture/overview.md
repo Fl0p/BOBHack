@@ -1,42 +1,96 @@
-# Общая архитектура проекта
+# Project Architecture Overview
 
-## Обзор
+## Overview
 
-BOBHack - это full-stack приложение, построенное на монорепозитории с использованием Yarn 4 workspaces.
+BOBHack is a full-stack application built on a monorepo architecture using Yarn 4 workspaces with Docker support for production deployment.
 
-## Технологический стек
+## Technology Stack
 
 ### Backend
-- **Node.js** - серверная среда выполнения
-- **Express.js** - веб-фреймворк
-- **TypeScript** - типизированный JavaScript
-- **tsx** - TypeScript execution для разработки
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **TypeScript** - Type-safe JavaScript
+- **tsx** - TypeScript execution for development
 
 ### Frontend
-- **React 18** - UI библиотека
-- **Vite** - инструмент сборки и dev-сервер
-- **TypeScript** - типизированный JavaScript
+- **React 18** - UI library
+- **Vite** - Build tool and dev server
+- **TypeScript** - Type-safe JavaScript
 
-## Структура проекта
+### Infrastructure
+- **Docker** - Containerization for all services
+- **Docker Compose** - Multi-service orchestration
+- **Cloudflare Tunnel** - Secure domain routing
+- **Dify** - AI platform integration (PostgreSQL, Redis, API, Worker, Web Console)
+
+## Project Structure
 
 ```
 BOBHack/
 ├── packages/
-│   ├── backend/     # Express API сервер
-│   └── frontend/    # React приложение
-├── docs/            # Документация
-└── package.json     # Workspace конфигурация
+│   ├── backend/           # Express API server
+│   │   ├── Dockerfile     # Backend container configuration
+│   │   └── src/           # Backend source code
+│   └── frontend/          # React application
+│       ├── Dockerfile     # Frontend container configuration
+│       ├── nginx.conf     # Production web server config
+│       └── src/           # Frontend source code
+├── docs/                  # Documentation
+├── docker-compose.yml     # Multi-service orchestration
+├── .dockerignore          # Docker build exclusions
+├── .env.example           # Environment variables template
+└── package.json           # Workspace configuration
 ```
 
-## Принципы архитектуры
+## Architecture Principles
 
-1. **Монорепозиторий**: Весь код находится в одном репозитории, управляемом через Yarn workspaces
-2. **Разделение concerns**: Backend и frontend являются независимыми пакетами
-3. **Type Safety**: Использование TypeScript на всех уровнях стека
-4. **Development Experience**: Конкурентный запуск сервисов для удобства разработки
+1. **Monorepo**: All code in a single repository managed through Yarn workspaces
+2. **Separation of Concerns**: Backend and frontend are independent packages
+3. **Type Safety**: TypeScript used across the entire stack
+4. **Development Experience**: Concurrent service execution for easy development
+5. **Containerization**: Docker-based deployment for consistency and scalability
+6. **AI Integration**: Dify platform for AI capabilities
 
-## Потоки данных
+## Deployment Modes
 
-Frontend → Vite Proxy → Backend API → Response → Frontend
+### Development Mode
+- Services run locally with hot reload
+- Vite proxy forwards `/api` requests to backend
+- Ports: Frontend (3000), Backend (3001)
 
-Подробнее см. [Коммуникация между сервисами](./communication.md)
+### Production Mode (Docker)
+- All services containerized
+- Cloudflare Tunnel for domain routing
+- Services: frontend, backend, dify (API, Worker, Web, DB, Redis)
+- Domains:
+  - `bob.aignite.pl` → Frontend
+  - `api.aignite.pl` → Backend
+  - `dify.aignite.pl` → Dify AI Platform
+
+## Data Flow
+
+### Development
+```
+Browser → Vite Dev Server → Vite Proxy → Backend API → Response → Browser
+```
+
+### Production
+```
+Browser → Cloudflare Tunnel → nginx (Frontend) or Express (Backend) → Response → Browser
+```
+
+See [Service Communication](./communication.md) for details.
+
+## External Services
+
+### Dify AI Platform
+- **API Service**: AI model endpoints
+- **Worker**: Background job processing
+- **Web Console**: Admin interface
+- **PostgreSQL**: Data storage
+- **Redis**: Caching and queue management
+
+### Cloudflare Tunnel
+- Secure domain routing without exposing ports
+- Automatic HTTPS
+- Zero Trust security model

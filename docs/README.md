@@ -1,30 +1,46 @@
 # BOBHack Documentation
 
-Добро пожаловать в документацию проекта BOBHack!
+Welcome to the BOBHack project documentation!
 
-## Содержание
+## Table of Contents
 
-### Архитектура
-- [Общая архитектура проекта](./architecture/overview.md)
-- [Workspace структура](./architecture/workspace-structure.md)
-- [Коммуникация между сервисами](./architecture/communication.md)
+### Architecture
+- [Project Architecture Overview](./architecture/overview.md)
+- [Workspace Structure](./architecture/workspace-structure.md)
+- [Service Communication](./architecture/communication.md)
 
 ### Backend
-- [Backend документация](./backend/README.md)
+- [Backend Documentation](./backend/README.md)
   - [API Endpoints](./backend/api-endpoints.md)
-  - [Конфигурация сервера](./backend/configuration.md)
-  - [Разработка](./backend/development.md)
+  - [Server Configuration](./backend/configuration.md)
+  - [Development](./backend/development.md)
 
 ### Frontend
-- [Frontend документация](./frontend/README.md)
-  - [Компоненты](./frontend/components.md)
-  - [Конфигурация Vite](./frontend/vite-configuration.md)
-  - [Разработка](./frontend/development.md)
+- [Frontend Documentation](./frontend/README.md)
+  - [Components](./frontend/components.md)
+  - [Vite Configuration](./frontend/vite-configuration.md)
+  - [Development](./frontend/development.md)
 
-## Быстрый старт
+### Deployment
+- [Docker Setup Guide](./docker-setup.md)
 
-Смотрите [README.md](../README.md) в корне проекта для инструкций по установке и запуску.
+## Quick Start
 
-## Дополнительные ресурсы
+See [README.md](../README.md) in the project root for installation and setup instructions.
 
-- [CLAUDE.md](../CLAUDE.md) - руководство для Claude Code при работе с проектом
+### Development Mode
+```bash
+yarn dev
+```
+
+### Docker Deployment
+```bash
+docker-compose up -d
+```
+
+See [Docker Setup Guide](./docker-setup.md) for detailed instructions.
+
+## Additional Resources
+
+- [CLAUDE.md](../CLAUDE.md) - Guidelines for Claude Code when working with this project
+- [.env.example](../.env.example) - Environment variables template
