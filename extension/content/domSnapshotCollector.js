@@ -45,8 +45,36 @@
         id: element.id ?? null,
         label: this.labelResolver.getLabel(element),
         placeholder: element.placeholder ?? null,
+        aliases: this.extractAliases(element),
         path: this.pathBuilder.build(element)
       };
+    }
+
+    extractAliases(element) {
+      if (!element) return [];
+      const datasets = [
+        element.dataset?.bobOlxOptions,
+        element.getAttribute?.('data-bob-olx-options')
+      ].filter(Boolean);
+      if (!datasets.length) return [];
+
+      for (const raw of datasets) {
+        if (typeof raw !== 'string' || !raw.trim()) continue;
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.map((item) => (typeof item === 'string' ? item : String(item ?? ''))).filter(Boolean);
+          }
+        } catch {
+          const items = raw
+            .split(/[\n;,]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+          if (items.length) return items;
+        }
+      }
+
+      return [];
     }
   }
 
