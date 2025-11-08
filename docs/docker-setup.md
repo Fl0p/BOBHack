@@ -56,33 +56,30 @@ nano .env
 ```
 
 Required variables:
-- `CLOUDFLARE_TUNNEL_TOKEN` - from Cloudflare dashboard
+- `BACKEND_URL` - backend API URL (e.g., https://api.aignite.pl)
 - `DIFY_SECRET_KEY` - generate strong random key
 - `DIFY_DB_PASSWORD` - generate strong password
 
 ### 3. update frontend api url
 
-The frontend API URL is configured as a build argument in `docker-compose.yml`:
+The frontend API URL is configured via the `BACKEND_URL` environment variable in `.env`:
+```env
+BACKEND_URL=https://api.aignite.pl
+```
+
+This value is passed as a build argument in `docker-compose.yml`:
 ```yaml
 frontend:
   build:
-    context: ./packages/frontend
-    dockerfile: Dockerfile
     args:
-      - VITE_API_URL=https://api.aignite.pl
-```
-
-This value is then used during the Docker build in `packages/frontend/Dockerfile`:
-```dockerfile
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+      - VITE_API_URL=${BACKEND_URL}
 ```
 
 To change the API URL:
-1. Edit `docker-compose.yml` and update the `VITE_API_URL` build argument
+1. Edit `.env` and update the `BACKEND_URL` variable
 2. Rebuild the frontend container: `docker-compose build frontend`
 
-**Note**: In development mode (without Docker), the frontend uses Vite proxy and connects to `http://localhost:3001`. The `VITE_API_URL` environment variable is only needed for production builds.
+**Note**: In development mode (without Docker), the frontend uses Vite proxy and connects to `http://localhost:3001`. The `BACKEND_URL` environment variable is only needed for production builds.
 
 ### 4. build and run
 
@@ -173,8 +170,8 @@ docker-compose exec dify-db psql -U dify -d dify
 # check tunnel logs
 docker-compose logs cloudflared
 
-# verify tunnel token is set
-docker-compose exec cloudflared env | grep TUNNEL_TOKEN
+# verify credentials file exists
+docker-compose exec cloudflared ls -la /etc/cloudflared/
 ```
 
 ### reset dify data

@@ -19,9 +19,8 @@ nano .env
 The `.env.example` file includes:
 
 ```env
-# Cloudflare Tunnel Token
-# Get this from Cloudflare Zero Trust dashboard: Access → Tunnels → Your Tunnel → Configure
-CLOUDFLARE_TUNNEL_TOKEN=your-tunnel-token-here
+# Cloudflare Tunnel
+# using json from .cloudflared
 
 # Dify Security Keys
 # Generate strong random keys for production (use: openssl rand -hex 32)
