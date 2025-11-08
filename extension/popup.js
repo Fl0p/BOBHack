@@ -1,5 +1,7 @@
 import { MESSAGE_TYPES } from './src/common/messageTypes.js';
 
+const MANUAL_MODE_KEY = 'manualModeEnabled';
+
 const form = document.getElementById('form');
 const runButton = document.getElementById('run');
 const statusEl = document.getElementById('status');
@@ -13,11 +15,45 @@ const updateStatus = (text) => {
   statusEl.textContent = text;
 };
 
-const toggleManualMode = () => {
-  const manualMode = manualToggle.checked;
+const applyManualMode = (manualMode) => {
   productField.classList.toggle('hidden', manualMode);
   manualField.classList.toggle('hidden', !manualMode);
 };
+
+const loadManualMode = () =>
+  new Promise((resolve) => {
+    const storage = chrome?.storage?.local;
+    if (!storage?.get) {
+      resolve(false);
+      return;
+    }
+    storage.get([MANUAL_MODE_KEY], (result) => {
+      resolve(Boolean(result?.[MANUAL_MODE_KEY]));
+    });
+  });
+
+const saveManualMode = (manualMode) =>
+  new Promise((resolve) => {
+    const storage = chrome?.storage?.local;
+    if (!storage?.set) {
+      resolve();
+      return;
+    }
+    storage.set({ [MANUAL_MODE_KEY]: manualMode }, () => resolve());
+  });
+
+const initManualMode = async () => {
+  try {
+    const manualMode = await loadManualMode();
+    manualToggle.checked = manualMode;
+    applyManualMode(manualMode);
+  } catch {
+    applyManualMode(manualToggle.checked);
+  }
+};
+
+applyManualMode(manualToggle.checked);
+initManualMode();
 
 const getActiveTabId = async () => {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -89,11 +125,11 @@ const runAutomation = async ({ manualMode, productId, manualData }) => {
 };
 
 manualToggle.addEventListener('change', () => {
-  toggleManualMode();
+  const manualMode = manualToggle.checked;
+  applyManualMode(manualMode);
+  saveManualMode(manualMode).catch(() => {});
   updateStatus('');
 });
-
-toggleManualMode();
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
