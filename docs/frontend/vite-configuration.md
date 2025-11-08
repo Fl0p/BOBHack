@@ -1,10 +1,10 @@
-# Vite конфигурация
+# Vite Configuration
 
-Документация по настройке Vite для frontend приложения.
+Documentation for Vite configuration in the frontend application.
 
-## Конфигурационный файл
+## Configuration File
 
-**Расположение**: `packages/frontend/vite.config.ts`
+**Location**: `packages/frontend/vite.config.ts`
 
 ```typescript
 import { defineConfig } from 'vite';
@@ -24,18 +24,18 @@ export default defineConfig({
 });
 ```
 
-## Плагины
+## Plugins
 
 ### @vitejs/plugin-react
 
-Официальный плагин для поддержки React:
-- Fast Refresh (горячая перезагрузка)
-- JSX/TSX трансформация
-- Оптимизация React в production
+Official plugin for React support:
+- Fast Refresh (hot reload)
+- JSX/TSX transformation
+- React optimization in production
 
 ## Dev Server
 
-### Порт
+### Port
 
 ```typescript
 server: {
@@ -43,11 +43,11 @@ server: {
 }
 ```
 
-Сервер разработки запускается на порту 3000.
+Development server runs on port 3000.
 
 ### Host
 
-Для доступа из локальной сети добавьте:
+To access from local network, add:
 
 ```typescript
 server: {
@@ -56,7 +56,20 @@ server: {
 }
 ```
 
-## Proxy конфигурация
+This allows access from devices on the same network using your local IP address.
+
+### HTTPS (Optional)
+
+For HTTPS in development:
+
+```typescript
+server: {
+  https: true,
+  port: 3000
+}
+```
+
+## Proxy Configuration
 
 ```typescript
 proxy: {
@@ -67,24 +80,39 @@ proxy: {
 }
 ```
 
-### Параметры
+### Parameters
 
-- **'/api'**: Все запросы начинающиеся с `/api` будут проксированы
-- **target**: URL backend сервера
-- **changeOrigin**: Изменяет origin заголовок запроса на target URL
+- **'/api'**: All requests starting with `/api` will be proxied
+- **target**: Backend server URL
+- **changeOrigin**: Changes the origin header of the request to the target URL
 
-### Как работает
+### How it Works
 
-1. Frontend делает запрос: `fetch('/api/hello')`
-2. Vite перехватывает запрос
-3. Перенаправляет на: `http://localhost:3001/api/hello`
-4. Возвращает ответ frontend'у
+1. Frontend makes a request: `fetch('/api/hello')`
+2. Vite intercepts the request
+3. Forwards to: `http://localhost:3001/api/hello`
+4. Returns response to frontend
 
-Подробнее см. [Коммуникация между сервисами](../architecture/communication.md)
+See [Service Communication](../architecture/communication.md) for more details.
 
-## Дополнительные настройки
+### Multiple Proxy Targets
 
-### Алиасы путей
+```typescript
+proxy: {
+  '/api': {
+    target: 'http://localhost:3001',
+    changeOrigin: true,
+  },
+  '/auth': {
+    target: 'http://localhost:3002',
+    changeOrigin: true,
+  },
+}
+```
+
+## Additional Configuration
+
+### Path Aliases
 
 ```typescript
 resolve: {
@@ -92,53 +120,117 @@ resolve: {
     '@': '/src',
     '@components': '/src/components',
     '@utils': '/src/utils',
+    '@hooks': '/src/hooks',
+    '@types': '/src/types',
   },
 }
 ```
 
-Использование:
+Usage:
 ```typescript
 import { Button } from '@components/Button';
+import { useFetch } from '@hooks/useFetch';
 ```
 
-### Environment переменные
+**Note**: Also update `tsconfig.json` for TypeScript support:
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  }
+}
+```
 
-Создайте `.env` файл:
+### Environment Variables
+
+Create a `.env` file:
 
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_APP_TITLE=BOBHack
 ```
 
-Использование в коде:
+Usage in code:
 ```typescript
 const apiUrl = import.meta.env.VITE_API_URL;
+const title = import.meta.env.VITE_APP_TITLE;
 ```
 
-**Важно**: Все переменные должны начинаться с `VITE_` для доступа в клиентском коде.
+**Important**: All variables must start with `VITE_` to be accessible in client code.
 
-### Build оптимизация
+### Environment Files
+
+- `.env` - Loaded in all cases
+- `.env.local` - Loaded in all cases, ignored by git
+- `.env.development` - Only loaded in development
+- `.env.production` - Only loaded in production
+
+### Build Optimization
 
 ```typescript
 build: {
   outDir: 'dist',
   sourcemap: true,
+  minify: 'terser',
   rollupOptions: {
     output: {
       manualChunks: {
         'react-vendor': ['react', 'react-dom'],
+        'router': ['react-router-dom'],
       },
     },
   },
+  chunkSizeWarningLimit: 1000,
 }
 ```
 
-## Режимы
+### CSS Configuration
 
-- **Development**: `yarn dev` - с hot reload и без минификации
-- **Production**: `yarn build` - оптимизированная сборка
-- **Preview**: `yarn preview` - предпросмотр production сборки
+```typescript
+css: {
+  modules: {
+    localsConvention: 'camelCase',
+  },
+  preprocessorOptions: {
+    scss: {
+      additionalData: `@import "@/styles/variables.scss";`
+    }
+  }
+}
+```
 
-## Полезные ссылки
+## Modes
 
-- [Vite документация](https://vitejs.dev/)
+- **Development**: `yarn dev` - with hot reload and no minification
+- **Production**: `yarn build` - optimized build
+- **Preview**: `yarn preview` - preview production build locally
+
+## Docker Production Configuration
+
+In Docker, the frontend is built and served by nginx (see `packages/frontend/nginx.conf`):
+
+```nginx
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+The API URL is configured via environment variable during build:
+```dockerfile
+ENV VITE_API_URL=https://api.aignite.pl
+```
+
+## Useful Links
+
+- [Vite Documentation](https://vitejs.dev/)
 - [Vite React Plugin](https://github.com/vitejs/vite-plugin-react)
+- [Vite Environment Variables](https://vitejs.dev/guide/env-and-mode.html)

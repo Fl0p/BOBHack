@@ -1,44 +1,72 @@
-# Backend документация
+# Backend Documentation
 
-Express.js сервер для BOBHack проекта.
+Express.js server for the BOBHack project.
 
-## Содержание
+## Table of Contents
 
-- [API Endpoints](./api-endpoints.md) - описание всех API эндпоинтов
-- [Конфигурация сервера](./configuration.md) - настройки и конфигурация
-- [Разработка](./development.md) - руководство по разработке backend
+- [API Endpoints](./api-endpoints.md) - All API endpoints documentation
+- [Server Configuration](./configuration.md) - Settings and configuration
+- [Development](./development.md) - Backend development guide
 
-## Технологии
+## Technologies
 
-- **Express.js** - веб-фреймворк
-- **TypeScript** - язык программирования
-- **CORS** - middleware для cross-origin запросов
-- **tsx** - TypeScript execution для разработки
+- **Express.js** - Web framework
+- **TypeScript** - Programming language
+- **CORS** - Middleware for cross-origin requests
+- **tsx** - TypeScript execution for development
 
-## Структура
+## Structure
 
 ```
 packages/backend/
 ├── src/
-│   └── index.ts          # Главный файл приложения
-├── dist/                 # Скомпилированный код (генерируется)
-├── package.json          # Зависимости и скрипты
-└── tsconfig.json         # TypeScript конфигурация
+│   └── index.ts          # Main application file
+├── dist/                 # Compiled code (generated)
+├── Dockerfile            # Docker container configuration
+├── .dockerignore         # Docker build exclusions
+├── package.json          # Dependencies and scripts
+└── tsconfig.json         # TypeScript configuration
 ```
 
-## Быстрые команды
+## Quick Commands
 
+### Development
 ```bash
-# Разработка с hot reload
+# Development with hot reload
 yarn workspace backend dev
 
-# Сборка
-yarn workspace backend build
+# Or from project root
+yarn dev:backend
+```
 
-# Production запуск
+### Building
+```bash
+# Compile TypeScript to JavaScript
+yarn workspace backend build
+```
+
+### Production
+```bash
+# Run compiled production version
 yarn workspace backend start
 ```
 
-## Порт
+### Docker
+```bash
+# Build Docker image
+docker build -t bobhack-backend ./packages/backend
 
-Backend работает на порте **3001**.
+# Run container
+docker run -p 3001:3001 bobhack-backend
+
+# Or use docker-compose
+docker-compose up backend
+```
+
+## Port
+
+Backend runs on port **3001**.
+
+## Environment Variables
+
+See [Server Configuration](./configuration.md) for details on environment variables and `.env` setup.

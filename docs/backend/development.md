@@ -1,24 +1,27 @@
-# Backend разработка
+# Backend Development
 
-Руководство по разработке backend части проекта.
+Guide for developing the backend portion of the project.
 
-## Запуск для разработки
+## Development Startup
 
 ```bash
-# Из корня проекта
+# From project root
 yarn dev:backend
 
-# Или напрямую из workspace
+# Or directly from workspace
 yarn workspace backend dev
+
+# Or run both frontend and backend
+yarn dev
 ```
 
-Сервер запустится на `http://localhost:3001` с hot reload через `tsx watch`.
+The server will start at `http://localhost:3001` with hot reload via `tsx watch`.
 
-## Добавление нового API endpoint
+## Adding a New API Endpoint
 
-1. Откройте `packages/backend/src/index.ts`
+1. Open `packages/backend/src/index.ts`
 
-2. Добавьте новый endpoint:
+2. Add a new endpoint:
 
 ```typescript
 app.get('/api/your-endpoint', (req: Request, res: Response) => {
@@ -26,7 +29,7 @@ app.get('/api/your-endpoint', (req: Request, res: Response) => {
 });
 ```
 
-3. Для POST запросов:
+3. For POST requests:
 
 ```typescript
 app.post('/api/create', (req: Request, res: Response) => {
@@ -35,42 +38,101 @@ app.post('/api/create', (req: Request, res: Response) => {
 });
 ```
 
-4. Обновите документацию в [api-endpoints.md](./api-endpoints.md)
+4. For requests with parameters:
 
-## Структурирование кода
+```typescript
+app.get('/api/users/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  res.json({ userId: id, data: {} });
+});
+```
 
-По мере роста проекта, рекомендуется разделить код на модули:
+5. Update documentation in [api-endpoints.md](./api-endpoints.md)
+
+## Code Structure
+
+As the project grows, it's recommended to split code into modules:
 
 ```
 packages/backend/src/
-├── index.ts              # Главный файл
+├── index.ts              # Main application file
 ├── routes/
 │   ├── users.ts          # User routes
-│   └── posts.ts          # Post routes
+│   ├── posts.ts          # Post routes
+│   └── index.ts          # Route aggregator
 ├── controllers/
 │   ├── userController.ts
 │   └── postController.ts
 ├── models/
-│   └── ...
-└── middleware/
-    └── ...
+│   ├── User.ts
+│   └── Post.ts
+├── middleware/
+│   ├── auth.ts
+│   ├── errorHandler.ts
+│   └── validation.ts
+├── services/
+│   └── database.ts
+└── types/
+    └── index.ts          # TypeScript type definitions
 ```
 
-## Тестирование
+### Example Modular Structure
 
-Для добавления тестов рекомендуется использовать:
-- **Jest** или **Vitest** - test runner
-- **Supertest** - для тестирования HTTP endpoints
+**routes/users.ts**:
+```typescript
+import { Router } from 'express';
+import { getUser, createUser } from '../controllers/userController';
+
+const router = Router();
+
+router.get('/:id', getUser);
+router.post('/', createUser);
+
+export default router;
+```
+
+**index.ts**:
+```typescript
+import userRoutes from './routes/users';
+
+app.use('/api/users', userRoutes);
+```
+
+## Testing
+
+For adding tests, it's recommended to use:
+- **Jest** or **Vitest** - test runner
+- **Supertest** - for testing HTTP endpoints
+
+### Setup
 
 ```bash
 yarn workspace backend add -D vitest supertest @types/supertest
 ```
 
-## Отладка
+### Example Test
+
+```typescript
+import { describe, it, expect } from 'vitest';
+import request from 'supertest';
+import app from '../src/index';
+
+describe('GET /api/hello', () => {
+  it('should return hello message', async () => {
+    const response = await request(app)
+      .get('/api/hello')
+      .expect(200);
+
+    expect(response.body.message).toBe('Hello World from Backend!');
+  });
+});
+```
+
+## Debugging
 
 ### VS Code
 
-Создайте `.vscode/launch.json`:
+Create `.vscode/launch.json`:
 
 ```json
 {
@@ -83,29 +145,66 @@ yarn workspace backend add -D vitest supertest @types/supertest
       "cwd": "${workspaceFolder}/packages/backend",
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["dev"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }
 ```
 
-### Console logging
+### Console Logging
 
 ```typescript
 console.log('Debug info:', data);
 console.error('Error:', error);
+console.warn('Warning:', warning);
 ```
 
-## Сборка для production
+### Using Debugger
+
+```typescript
+debugger; // Will pause execution when debugging
+```
+
+## Building for Production
 
 ```bash
 yarn workspace backend build
 ```
 
-Это скомпилирует TypeScript код в директорию `dist/`.
+This compiles TypeScript code to the `dist/` directory.
 
-Запуск production версии:
+### Running Production Build
 
 ```bash
 yarn workspace backend start
 ```
+
+### Docker Production Build
+
+```bash
+# Build Docker image
+docker build -t bobhack-backend ./packages/backend
+
+# Run container
+docker run -p 3001:3001 \
+  -e NODE_ENV=production \
+  bobhack-backend
+
+# Or use docker-compose
+docker-compose up -d backend
+```
+
+## Environment Variables
+
+See [configuration.md](./configuration.md) for setting up environment variables.
+
+## Best Practices
+
+1. **Type Safety**: Always use TypeScript types
+2. **Error Handling**: Implement proper error handling middleware
+3. **Validation**: Validate all input data
+4. **Security**: Use helmet, rate limiting, and input sanitization
+5. **Logging**: Use structured logging (consider winston or pino)
+6. **Testing**: Write tests for critical endpoints
+7. **Documentation**: Keep API documentation up to date

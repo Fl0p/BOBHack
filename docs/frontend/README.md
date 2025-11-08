@@ -1,48 +1,85 @@
-# Frontend документация
+# Frontend Documentation
 
-React + Vite приложение для BOBHack проекта.
+React + Vite application for the BOBHack project.
 
-## Содержание
+## Table of Contents
 
-- [Компоненты](./components.md) - описание React компонентов
-- [Конфигурация Vite](./vite-configuration.md) - настройки Vite
-- [Разработка](./development.md) - руководство по разработке frontend
+- [Components](./components.md) - React components description
+- [Vite Configuration](./vite-configuration.md) - Vite settings
+- [Development](./development.md) - Frontend development guide
 
-## Технологии
+## Technologies
 
-- **React 18** - UI библиотека
-- **TypeScript** - язык программирования
-- **Vite** - инструмент сборки и dev-сервер
+- **React 18** - UI library
+- **TypeScript** - Programming language
+- **Vite** - Build tool and dev server
 
-## Структура
+## Structure
 
 ```
 packages/frontend/
 ├── src/
-│   ├── main.tsx          # Точка входа
-│   ├── App.tsx           # Главный компонент
-│   └── App.css           # Стили
-├── public/               # Статические файлы
-├── dist/                 # Собранное приложение (генерируется)
-├── index.html            # HTML шаблон
-├── package.json          # Зависимости и скрипты
-├── tsconfig.json         # TypeScript конфигурация
-└── vite.config.ts        # Vite конфигурация
+│   ├── main.tsx          # Application entry point
+│   ├── App.tsx           # Main component
+│   └── App.css           # Styles
+├── public/               # Static files
+├── dist/                 # Built application (generated)
+├── Dockerfile            # Docker container configuration
+├── .dockerignore         # Docker build exclusions
+├── nginx.conf            # Production web server config
+├── index.html            # HTML template
+├── package.json          # Dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+└── vite.config.ts        # Vite configuration with proxy
 ```
 
-## Быстрые команды
+## Quick Commands
 
+### Development
 ```bash
-# Разработка
+# Development mode with hot reload
 yarn workspace frontend dev
 
-# Сборка
-yarn workspace frontend build
+# Or from project root
+yarn dev:frontend
 
-# Preview собранного приложения
+# Or run both frontend and backend
+yarn dev
+```
+
+### Building
+```bash
+# Build for production
+yarn workspace frontend build
+```
+
+### Preview
+```bash
+# Preview production build locally
 yarn workspace frontend preview
 ```
 
-## Порт
+### Docker
+```bash
+# Build Docker image
+docker build -t bobhack-frontend ./packages/frontend
 
-Frontend работает на порте **3000**.
+# Run container
+docker run -p 80:80 bobhack-frontend
+
+# Or use docker-compose
+docker-compose up frontend
+```
+
+## Port
+
+- **Development**: Port **3000**
+- **Production (Docker)**: Port **80** (nginx)
+
+## API Integration
+
+Frontend communicates with the backend via:
+- **Development**: Vite proxy forwards `/api/*` to `http://localhost:3001`
+- **Production**: Direct requests to `https://api.aignite.pl`
+
+See [Vite Configuration](./vite-configuration.md) for proxy setup details.
