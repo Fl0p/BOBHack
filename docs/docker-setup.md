@@ -6,6 +6,16 @@ This setup includes:
 - **frontend** (React + Vite) → `bob.aignite.pl`
 - **backend** (Express API) → `api.aignite.pl`
 - **dify** (AI Platform) → `dify.aignite.pl`
+  - API service
+  - Web console
+  - Worker service
+  - Beat scheduler (Celery Beat)
+  - PostgreSQL database
+  - Redis cache
+  - Sandbox for code execution
+  - Plugin daemon system
+  - SSRF proxy for security
+  - Weaviate vector store (optional)
 - **cloudflare tunnel** for domain routing
 
 ## prerequisites
@@ -23,27 +33,25 @@ This setup includes:
 3. Create a new tunnel (or use existing tunnel "aignite-local")
 4. Download the tunnel credentials JSON file
 5. Place the credentials file in `.cloudflared/` directory
-6. Update `.cloudflared/config.yaml` with your credentials filename:
-   ```yaml
-   tunnel: aignite-local
-   credentials-file: /etc/cloudflared/YOUR-TUNNEL-ID.json
+6. Update `.cloudflared/config.yaml` with your credentials filename
 
-   ingress:
-     - hostname: bob.aignite.pl
-       service: http://frontend:80
-     - hostname: api.aignite.pl
-       service: http://backend:3001
-     - hostname: dify.aignite.pl
-       service: http://dify-web:3000
-     - hostname: dify-api.aignite.pl
-       service: http://dify-api:5001
-     - service: http_status:404
-   ```
-7. The configuration supports:
-   - `bob.aignite.pl` → Frontend (React app)
-   - `api.aignite.pl` → Backend (Express API)
-   - `dify.aignite.pl` → Dify Web Console
-   - `dify-api.aignite.pl` → Dify API (direct access)
+**Important**: The configuration now uses a unified domain approach for Dify. All API endpoints are served under `dify.aignite.pl` with path-based routing:
+
+The configuration supports:
+- `bob.aignite.pl` → Frontend (React app)
+- `api.aignite.pl` → Backend (Express API)
+- `dify.aignite.pl` → Dify platform with path-based routing:
+  - `/console/api/*` → Console API
+  - `/api/*` → Public API
+  - `/v1/*` → v1 API
+  - `/files/*` → File uploads/downloads
+  - `/internal/*` → Internal API for SSE (Server-Sent Events)
+  - `/` (root) → Web Console
+
+Enhanced timeout and streaming support:
+- API endpoints use 60-120s connection timeouts
+- Disabled chunked encoding for better compatibility
+- SSE endpoints support streaming responses
 
 ### 2. environment configuration
 
@@ -57,8 +65,19 @@ nano .env
 
 Required variables:
 - `BACKEND_URL` - backend API URL (e.g., https://api.aignite.pl)
-- `DIFY_SECRET_KEY` - generate strong random key
-- `DIFY_DB_PASSWORD` - generate strong password
+- `DIFY_SECRET_KEY` - generate strong random key (use: `openssl rand -hex 32`)
+- `DIFY_DB_PASSWORD` - PostgreSQL database password
+- `REDIS_PASSWORD` - Redis cache password
+- `PLUGIN_DAEMON_KEY` - Plugin daemon security key
+- `PLUGIN_DIFY_INNER_API_KEY` - Internal plugin API key
+- `SANDBOX_API_KEY` - Code sandbox API key
+- `WEAVIATE_API_KEY` - Weaviate vector store API key (if using Weaviate)
+
+Optional variables:
+- `VECTOR_STORE` - Vector database type (default: weaviate)
+- `STORAGE_TYPE` - Storage backend (default: local)
+- `LOG_LEVEL` - Logging level (default: INFO)
+- `MARKETPLACE_ENABLED` - Enable plugin marketplace (default: false)
 
 ### 3. update frontend api url
 
@@ -119,10 +138,53 @@ docker-compose ps
 ### dify services
 - **dify-web**: Web console (port 3000)
 - **dify-api**: API service (port 5001)
-- **dify-worker**: Background worker
+- **dify-worker**: Background worker (Celery worker)
+- **dify-worker-beat**: Task scheduler (Celery Beat)
 - **dify-db**: PostgreSQL database
 - **dify-redis**: Redis cache
+- **sandbox**: Code execution sandbox (port 8194)
+- **plugin_daemon**: Plugin management system (port 5002)
+- **ssrf_proxy**: SSRF protection proxy (Squid, port 3128)
+- **weaviate**: Vector database (port 8080, optional profile)
 - Public URL: `https://dify.aignite.pl`
+
+## advanced features
+
+### vector database profiles
+
+The Weaviate vector store is available as an optional Docker Compose profile:
+
+```bash
+# start with weaviate vector store
+docker-compose --profile weaviate up -d
+
+# check weaviate status
+docker-compose exec weaviate curl -f http://localhost:8080/v1/.well-known/ready
+```
+
+### plugin system
+
+The plugin daemon enables extending Dify with custom plugins:
+- Plugin daemon runs on port 5002
+- Remote plugin debugging available on port 5003 (configurable via `EXPOSE_PLUGIN_DEBUGGING_PORT`)
+- Plugins stored in `./volumes/plugin_daemon/`
+- Marketplace disabled by default (set `MARKETPLACE_ENABLED=true` to enable)
+
+### code execution sandbox
+
+The sandbox service provides secure code execution:
+- Runs in isolated environment with configurable network access
+- HTTP/HTTPS proxy through SSRF proxy for security
+- Configurable worker timeout (default: 15s)
+- Python dependencies can be mounted via `./volumes/sandbox/dependencies/`
+
+### ssrf protection
+
+The SSRF proxy (Squid) protects against Server-Side Request Forgery attacks:
+- Filters outbound requests from sandbox
+- Configurable via `ssrf_proxy/squid.conf.template`
+- Automatically generates SSL certificates for HTTPS inspection
+- Logs redirected to Docker logs
 
 ## management commands
 
@@ -211,6 +273,28 @@ cat dify_backup_20241108.sql | docker-compose exec -T dify-db psql -U dify dify
 # restore volumes
 docker run --rm -v bobhack_dify-api-storage:/data -v $(pwd):/backup alpine tar xzf /backup/dify_storage_20241108.tar.gz -C /
 ```
+
+## dify deployment examples
+
+The `example/` directory contains comprehensive Dify deployment examples and templates:
+
+### contents
+- **docker-compose templates**: Various deployment configurations
+- **nginx configs**: Reverse proxy and SSL setup
+- **certbot**: SSL certificate management
+- **vector database configs**: ElasticSearch, Couchbase, PGVector, TiDB, MyScale, OpenSearch, OceanBase
+- **middleware configs**: Standalone middleware setup for development
+- **startup scripts**: Initialization and user setup scripts
+
+### usage
+The example directory is based on official Dify deployment templates and provides:
+1. Reference implementations for different vector stores
+2. SSL/TLS certificate automation with Certbot
+3. Production-ready nginx configurations
+4. Database initialization scripts
+5. Middleware-only deployment for local development
+
+Refer to `example/README.md` for detailed deployment instructions.
 
 ## development vs production
 

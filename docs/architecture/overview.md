@@ -20,8 +20,18 @@ BOBHack is a full-stack application built on a monorepo architecture using Yarn 
 ### Infrastructure
 - **Docker** - Containerization for all services
 - **Docker Compose** - Multi-service orchestration
-- **Cloudflare Tunnel** - Secure domain routing
-- **Dify** - AI platform integration (PostgreSQL, Redis, API, Worker, Web Console)
+- **Cloudflare Tunnel** - Secure domain routing with SSL termination
+- **Dify Platform** - AI platform integration
+  - API Service
+  - Worker Service (Celery)
+  - Beat Scheduler (Celery Beat)
+  - Web Console
+  - PostgreSQL Database
+  - Redis Cache
+  - Code Execution Sandbox
+  - Plugin Daemon System
+  - SSRF Protection Proxy (Squid)
+  - Weaviate Vector Store (optional)
 
 ## Project Structure
 
@@ -36,8 +46,28 @@ BOBHack/
 │       ├── nginx.conf     # Production web server config
 │       ├── vite-env.d.ts  # TypeScript env variable types
 │       └── src/           # Frontend source code
+├── extension/             # Browser extension
+│   ├── manifest.json      # Extension manifest (v3)
+│   ├── contentScript.js   # Content script entry point
+│   ├── background/        # Background service scripts
+│   └── content/           # Content script modules
+├── example/               # Dify deployment examples
+│   ├── docker-compose*    # Example deployment configs
+│   ├── nginx/             # Nginx configuration templates
+│   ├── certbot/           # SSL certificate automation
+│   └── volumes/           # Volume configuration examples
 ├── .cloudflared/          # Cloudflare Tunnel configuration
 │   └── config.yaml        # Tunnel routing and ingress rules
+├── ssrf_proxy/            # SSRF protection configuration
+│   ├── squid.conf         # Squid proxy configuration
+│   └── docker-entrypoint.sh # Proxy initialization script
+├── volumes/               # Docker volume mounts
+│   ├── sandbox/           # Sandbox configuration
+│   └── plugin_daemon/     # Plugin storage
+├── .github/workflows/     # CI/CD pipelines
+│   └── build.yml          # Build and deployment workflow
+├── scripts/               # Deployment scripts
+│   └── rebuild-and-start.sh # Rebuild and restart script
 ├── docs/                  # Documentation
 ├── docker-compose.yml     # Multi-service orchestration
 ├── .dockerignore          # Docker build exclusions
@@ -87,13 +117,27 @@ See [Service Communication](./communication.md) for details.
 ## External Services
 
 ### Dify AI Platform
-- **API Service**: AI model endpoints
-- **Worker**: Background job processing
-- **Web Console**: Admin interface
+- **API Service**: AI model endpoints (port 5001)
+- **Worker**: Background job processing (Celery)
+- **Beat Scheduler**: Task scheduling (Celery Beat)
+- **Web Console**: Admin interface (port 3000)
 - **PostgreSQL**: Data storage
-- **Redis**: Caching and queue management
+- **Redis**: Caching and queue management (with authentication)
+- **Sandbox**: Isolated code execution environment (port 8194)
+- **Plugin Daemon**: Plugin management system (port 5002)
+- **SSRF Proxy**: Request filtering and protection (port 3128)
+- **Weaviate**: Vector database for embeddings (port 8080, optional)
 
 ### Cloudflare Tunnel
 - Secure domain routing without exposing ports
-- Automatic HTTPS
+- Automatic HTTPS with SSL termination
 - Zero Trust security model
+- Path-based routing for unified domain approach
+- Extended timeouts for streaming and long-running requests (60-120s)
+- Support for Server-Sent Events (SSE) and streaming responses
+
+### Security Features
+- **SSRF Protection**: Squid proxy filters outbound requests from sandbox
+- **Network Isolation**: Internal networks for sensitive services
+- **Authentication**: Redis, Weaviate, Plugin Daemon, Sandbox all use API keys
+- **Secret Management**: Centralized .env configuration with strong key generation recommendations
