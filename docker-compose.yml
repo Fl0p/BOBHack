@@ -21,8 +21,44 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3001
+      - BACKEND_DB_HOST=backend-db
+      - BACKEND_DB_PORT=5432
+      - BACKEND_DB_USER=${BACKEND_DB_USER:-bobhack}
+      - BACKEND_DB_PASSWORD=${BACKEND_DB_PASSWORD}
+      - BACKEND_DB_NAME=${BACKEND_DB_NAME:-bobhack}
+    depends_on:
+      backend-db:
+        condition: service_healthy
     networks:
       - bobhack-network
+
+  # Backend PostgreSQL database
+  backend-db:
+    image: postgres:15-alpine
+    container_name: backend-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${BACKEND_DB_USER:-bobhack}
+      POSTGRES_PASSWORD: ${BACKEND_DB_PASSWORD}
+      POSTGRES_DB: ${BACKEND_DB_NAME:-bobhack}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: >
+      postgres -c 'max_connections=100'
+               -c 'shared_buffers=128MB'
+               -c 'work_mem=4MB'
+               -c 'maintenance_work_mem=64MB'
+               -c 'effective_cache_size=4096MB'
+    volumes:
+      - backend-db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - bobhack-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${BACKEND_DB_USER:-bobhack}", "-d", "${BACKEND_DB_NAME:-bobhack}"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
 
   # Dify PostgreSQL database
   dify-db:
@@ -477,6 +513,7 @@ networks:
     internal: true
 
 volumes:
+  backend-db-data:
   dify-db-data:
   dify-redis-data:
   dify-api-storage:
