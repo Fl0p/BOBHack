@@ -20,7 +20,14 @@
     isCollectable(element) {
       if (!element) return false;
       if (element.disabled) return false;
-      if (element.tagName.toLowerCase() === 'input' && element.type === 'hidden') return false;
+
+      const tag = element.tagName.toLowerCase();
+      if (tag === 'input') {
+        const type = (element.type ?? '').toLowerCase();
+        const excludedTypes = new Set(['hidden', 'button', 'submit', 'reset', 'image']);
+        if (excludedTypes.has(type)) return false;
+      }
+
       return true;
     }
 
