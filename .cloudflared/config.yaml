@@ -2,46 +2,78 @@ tunnel: aignite-local
 credentials-file: /etc/cloudflared/f3ae1442-62b0-4c23-8808-46c7e22dff72.json
 
 ingress:
+  # BOBHack Frontend
   - hostname: bob.aignite.pl
     service: http://frontend:80
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
 
+  # BOBHack Backend API
   - hostname: api.aignite.pl
     service: http://backend:3001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
 
-  # Dify API endpoints (must be before web to match paths first)
+  # ============================================================================
+  # Dify API Endpoints (must be before web to match paths first)
+  # ============================================================================
+  
+  # Console API endpoints
   - hostname: dify.aignite.pl
     path: /console/api/*
     service: http://dify-api:5001
     originRequest:
       noTLSVerify: true
-      connectTimeout: 30s
+      connectTimeout: 60s
+      noChunkedEncoding: true
       httpHostHeader: dify.aignite.pl
 
+  # Public API endpoints
   - hostname: dify.aignite.pl
     path: /api/*
     service: http://dify-api:5001
     originRequest:
       noTLSVerify: true
-      connectTimeout: 30s
+      connectTimeout: 60s
+      noChunkedEncoding: true
       httpHostHeader: dify.aignite.pl
 
+  # v1 API (for compatibility)
   - hostname: dify.aignite.pl
     path: /v1/*
     service: http://dify-api:5001
     originRequest:
       noTLSVerify: true
-      connectTimeout: 30s
+      connectTimeout: 60s
+      noChunkedEncoding: true
       httpHostHeader: dify.aignite.pl
 
+  # Files and uploads
   - hostname: dify.aignite.pl
     path: /files/*
     service: http://dify-api:5001
     originRequest:
       noTLSVerify: true
-      connectTimeout: 30s
+      connectTimeout: 120s
+      noChunkedEncoding: true
       httpHostHeader: dify.aignite.pl
 
-  # Dify Web (catch-all for this hostname)
+  # Internal API for SSE (Server-Sent Events) and streaming
+  - hostname: dify.aignite.pl
+    path: /internal/*
+    service: http://dify-api:5001
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 120s
+      noChunkedEncoding: true
+      disableChunkedEncoding: false
+      httpHostHeader: dify.aignite.pl
+
+  # ============================================================================
+  # Dify Web Console (catch-all for this hostname)
+  # ============================================================================
   - hostname: dify.aignite.pl
     service: http://dify-web:3000
     originRequest:
@@ -49,4 +81,5 @@ ingress:
       connectTimeout: 30s
       httpHostHeader: dify.aignite.pl
 
+  # Default 404
   - service: http_status:404
