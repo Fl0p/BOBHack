@@ -5,6 +5,8 @@ import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { BotManagement } from './pages/BotManagement';
+import { ViewTasks } from './pages/ViewTasks';
 import './App.css';
 
 // Google Client ID from client_secret.json
@@ -18,12 +20,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={
-              <div className="App">
-                <Header />
-                <Dashboard />
-              </div>
-            } />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bots" element={<BotManagement />} />
+            <Route path="/tasks" element={<ViewTasks />} />
           </Routes>
         </Router>
       </AuthProvider>

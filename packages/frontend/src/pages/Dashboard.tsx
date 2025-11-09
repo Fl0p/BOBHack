@@ -1,9 +1,23 @@
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 export const Dashboard = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  // Generate random statistics
+  const stats = {
+    activeBots: Math.floor(Math.random() * 3) + 2,
+    tasksCompleted: Math.floor(Math.random() * 500) + 100,
+    pendingTasks: Math.floor(Math.random() * 50) + 10,
+    successRate: Math.floor(Math.random() * 15) + 85
+  };
 
   if (loading) {
     return (
@@ -36,6 +50,9 @@ export const Dashboard = () => {
               </div>
             )}
           </div>
+          <button onClick={handleLogout} className="dashboard-logout-btn">
+            Logout
+          </button>
         </div>
       </section>
 
@@ -47,7 +64,7 @@ export const Dashboard = () => {
             <div className="stat-icon">📊</div>
             <div className="stat-details">
               <h3>Active Bots</h3>
-              <p className="stat-value">0</p>
+              <p className="stat-value">{stats.activeBots}</p>
             </div>
           </div>
 
@@ -55,7 +72,7 @@ export const Dashboard = () => {
             <div className="stat-icon">⚡</div>
             <div className="stat-details">
               <h3>Tasks Completed</h3>
-              <p className="stat-value">0</p>
+              <p className="stat-value">{stats.tasksCompleted}</p>
             </div>
           </div>
 
@@ -63,7 +80,7 @@ export const Dashboard = () => {
             <div className="stat-icon">⏱️</div>
             <div className="stat-details">
               <h3>Pending Tasks</h3>
-              <p className="stat-value">0</p>
+              <p className="stat-value">{stats.pendingTasks}</p>
             </div>
           </div>
 
@@ -71,7 +88,7 @@ export const Dashboard = () => {
             <div className="stat-icon">✅</div>
             <div className="stat-details">
               <h3>Success Rate</h3>
-              <p className="stat-value">100%</p>
+              <p className="stat-value">{stats.successRate}%</p>
             </div>
           </div>
         </div>
@@ -80,11 +97,11 @@ export const Dashboard = () => {
         <section className="quick-actions">
           <h2>Quick Actions</h2>
           <div className="actions-grid">
-            <button className="action-btn">
+            <button className="action-btn" onClick={() => navigate('/bots')}>
               <span className="action-icon">🤖</span>
-              <span>Create New Bot</span>
+              <span>Bot Management</span>
             </button>
-            <button className="action-btn">
+            <button className="action-btn" onClick={() => navigate('/tasks')}>
               <span className="action-icon">📝</span>
               <span>View Tasks</span>
             </button>
