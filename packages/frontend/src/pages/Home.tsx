@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 export const Home = () => {
@@ -14,6 +15,10 @@ export const Home = () => {
 
   return (
     <div className="home-page">
+      {/* Join Button */}
+      <Link to="/login" className="home-join-button">
+        Join
+      </Link>
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">

@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './contexts/AuthContext';
-import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { Dashboard } from './pages/Dashboard';
+import { BotManagement } from './pages/BotManagement';
+import { ViewTasks } from './pages/ViewTasks';
 import './App.css';
 
 // Google Client ID from client_secret.json
@@ -14,13 +16,13 @@ function App() {
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <Router>
-          <div className="App">
-            <Header />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bots" element={<BotManagement />} />
+            <Route path="/tasks" element={<ViewTasks />} />
+          </Routes>
         </Router>
       </AuthProvider>
     </GoogleOAuthProvider>

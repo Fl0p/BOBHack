@@ -26,8 +26,8 @@ export const Login = () => {
         console.log('Login successful:', data);
         // Update auth context
         login(data.user);
-        // Redirect to home page
-        navigate('/');
+        // Redirect to dashboard
+        navigate('/dashboard');
       } else {
         console.error('Login failed');
       }
