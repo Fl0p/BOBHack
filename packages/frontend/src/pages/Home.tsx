@@ -23,7 +23,7 @@ export const Home = () => {
       <section className="hero">
         <div className="hero-content">
           <h1 className="hero-title">
-            Back Office Operations Bot Solution
+            Back Office Operations Bots Solution
           </h1>
           <p className="hero-subtitle">
             Automate routine back-office operations with intelligent bots
@@ -68,6 +68,12 @@ export const Home = () => {
           The system helps automate routine tasks, improves work efficiency, 
           and reduces the likelihood of errors in operational processes.
         </p>
+      </section>
+
+      {/* Image Section */}
+      <section className="image-section">
+        <img src="/img.jpg" alt="Banner" className="section-image" />
+        <button className="demo-button">Watch the demo</button>
       </section>
 
       {/* Footer */}

@@ -1,6 +1,6 @@
 # BOBHack
 
-Back Office Operations Bot Solution
+Back Office Operations Bots Solution
 
 ## Stack
 - Yarn 4.10.3 with workspaces
