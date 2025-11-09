@@ -6,7 +6,19 @@
   "options_page": "options.html",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Dify Autofill"
+    "default_title": "Dify Autofill",
+    "default_icon": {
+      "16": "src/common/Untitled-1.png",
+      "32": "src/common/Untitled-1.png",
+      "48": "src/common/Untitled-1.png",
+      "128": "src/common/Untitled-1.png"
+    }
+  },
+  "icons": {
+    "16": "src/common/Untitled-1.png",
+    "32": "src/common/Untitled-1.png",
+    "48": "src/common/Untitled-1.png",
+    "128": "src/common/Untitled-1.png"
   },
   "permissions": [
     "activeTab",

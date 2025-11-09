@@ -1,0 +1,560 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: integration-flow-prod-1
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.2.6@e2665624a156f52160927bceac9e169bd7e5ae6b936ae82575e14c90af390e6e
+    version: null
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: template-transform
+        targetType: llm
+      id: 1762605190423-source-1762605669992-target
+      source: '1762605190423'
+      sourceHandle: source
+      target: '1762605669992'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: template-transform
+      id: 1762629913453-true-1762605190423-target
+      source: '1762629913453'
+      sourceHandle: 'true'
+      target: '1762605190423'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 1762600648742-source-1762629913453-target
+      source: '1762600648742'
+      sourceHandle: source
+      target: '1762629913453'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 17626300574630-source-1762600669764-target
+      source: '17626300574630'
+      sourceHandle: source
+      target: '1762600669764'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1762629913453-7378c7c1-5610-4f9d-a6eb-94385d0444b2-17626300574630-target
+      source: '1762629913453'
+      sourceHandle: 7378c7c1-5610-4f9d-a6eb-94385d0444b2
+      target: '17626300574630'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1762605669992-source-1762631769286-target
+      source: '1762605669992'
+      sourceHandle: source
+      target: '1762631769286'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: tool
+      id: 1762629913453-true-1762642883660-target
+      source: '1762629913453'
+      sourceHandle: 'true'
+      target: '1762642883660'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: template-transform
+      id: 1762642883660-source-1762605190423-target
+      source: '1762642883660'
+      sourceHandle: source
+      target: '1762605190423'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - hint: ''
+          label: dom
+          max_length: null
+          options: []
+          placeholder: ''
+          required: false
+          type: paragraph
+          variable: dom
+        - default: ''
+          hint: ''
+          label: product_id product_id
+          max_length: null
+          options: []
+          placeholder: ''
+          required: false
+          type: text-input
+          variable: product_id
+        - default: ''
+          hint: ''
+          label: manual_input
+          max_length: null
+          options: []
+          placeholder: ''
+          required: false
+          type: paragraph
+          variable: manual_input
+        - default: ''
+          hint: ''
+          label: mode
+          max_length: null
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: mode
+      height: 166
+      id: '1762600648742'
+      position:
+        x: -34.47874446176701
+        y: 52.98999102191979
+      positionAbsolute:
+        x: -34.47874446176701
+        y: 52.98999102191979
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '17626300574630'
+          - text
+          value_type: string
+          variable: json_data
+        selected: false
+        title: End
+        type: end
+      height: 89
+      id: '1762600669764'
+      position:
+        x: 1761.1837990139227
+        y: 156.57990121720985
+      positionAbsolute:
+        x: 1761.1837990139227
+        y: 156.57990121720985
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        selected: false
+        template: '<db_response>
+
+          {{ DbResponse }}
+
+          </db_response>
+
+
+          <dom>
+
+          {{ dom }}
+
+          </dom>'
+        title: Data Merger
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1762642883660'
+          - text
+          value_type: string
+          variable: DbResponse
+        - value_selector:
+          - '1762600648742'
+          - dom
+          value_type: string
+          variable: dom
+      height: 52
+      id: '1762605190423'
+      position:
+        x: 938.0462103238159
+        y: -39.06229877850241
+      positionAbsolute:
+        x: 938.0462103238159
+        y: -39.06229877850241
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            enable_stream: false
+            reasoning_effort: minimal
+            verbosity: low
+          mode: chat
+          name: gpt-5
+          provider: langgenius/openai/openai
+        prompt_config:
+          jinja2_variables:
+          - value_selector:
+            - '1762605190423'
+            - output
+            value_type: string
+            variable: merged_data
+        prompt_template:
+        - edition_type: basic
+          id: 47e8d383-b90f-42a5-97bb-a10c12f0fd42
+          jinja2_text: '''You are aselling ssistent for fillind inputs on websites.
+            Data from seller DB prowided inside <db_response> tag. All fields from
+            website provided inside <dom> tag. Try to understand how to math data
+            from db_responce to dom fields and giwe response''
+
+
+
+            {{ merged_data }}'
+          role: system
+          text: "You are a selling assistant for populating inputs on websites. Data\
+            \ from seller DB provided inside <db_response> tag. All fields from website\
+            \ provided inside <dom> tag. Try to understand how to math data from db_responce\
+            \ to dom fields and giwe response\n\nTry to populate fields that not represented\
+            \ in <db_response> from your own knowledge, but DO TOT HALUCINATE!\n\n\
+            \ {{#1762605190423.output#}}\n\nResponse should be plain JSON.\n\n<response_format>\n\
+            {\n  \"result\": {\n    \"fields\": [\n      {\n        \"id\": \"email\"\
+            ,\n        \"value\": \"user@example.com\"\n      },\n      {\n      \
+            \  \"name\": \"first_name\",\n        \"value\": \"Alice\"\n      },\n\
+            \      {\n        \"path\": \"#contact-form > input[name=\\\"phone\\\"\
+            ]\",\n        \"value\": \"+1 555 0100\"\n      }\n    ]\n  }\n}\n</response_format>"
+        selected: true
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              result:
+                additionalProperties: false
+                properties:
+                  fields:
+                    items:
+                      additionalProperties: false
+                      properties:
+                        id:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - id
+                      - value
+                      type: object
+                    type: array
+                required:
+                - fields
+                type: object
+            required:
+            - result
+            type: object
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1762605669992'
+      position:
+        x: 1298.4408837402573
+        y: -39.06229877850241
+      positionAbsolute:
+        x: 1298.4408837402573
+        y: -39.06229877850241
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 147fe133-6734-4a3d-89ce-52f31d3eab5f
+            value: product
+            varType: string
+            variable_selector:
+            - '1762600648742'
+            - mode
+          id: 'true'
+          logical_operator: and
+        - case_id: 7378c7c1-5610-4f9d-a6eb-94385d0444b2
+          conditions:
+          - comparison_operator: is
+            id: fc276dcd-623e-48e5-9520-bfb3ba2b3dff
+            value: manual
+            varType: string
+            variable_selector:
+            - '1762600648742'
+            - mode
+          id: 7378c7c1-5610-4f9d-a6eb-94385d0444b2
+          logical_operator: and
+        selected: false
+        title: IF/ELSE
+        type: if-else
+      height: 172
+      id: '1762629913453'
+      position:
+        x: 287.9126486193399
+        y: 77.6545813285907
+      positionAbsolute:
+        x: 287.9126486193399
+        y: 77.6545813285907
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            enable_stream: false
+            reasoning_effort: minimal
+            verbosity: low
+          mode: chat
+          name: gpt-5
+          provider: langgenius/openai/openai
+        prompt_config:
+          jinja2_variables: []
+        prompt_template:
+        - edition_type: basic
+          id: 47e8d383-b90f-42a5-97bb-a10c12f0fd42
+          jinja2_text: ''
+          role: system
+          text: "You are a selling assistent for populate inputs on websites. Data\
+            \ about selling product provided inside <data> tag. All fields from website\
+            \ provided inside <dom> tag. Try to understand how to math data from <data>\
+            \ to <dom> fields and give response. \n\nTry to populate fields that not\
+            \ represented in <data> from your own knowledge, but DO TOT HALUCINATE!\n\
+            \n<data>{{#1762600648742.manual_input#}}</data>\n<dom>{{#1762600648742.dom#}}</dom>\n\
+            \nResponse should be plain JSON.\n\n<response_format>\n{\n  \"result\"\
+            : {\n    \"fields\": [\n      {\n        \"id\": \"email\",\n        \"\
+            value\": \"user@example.com\"\n      },\n      {\n        \"name\": \"\
+            first_name\",\n        \"value\": \"Alice\"\n      },\n      {\n     \
+            \   \"path\": \"#contact-form > input[name=\\\"phone\\\"]\",\n       \
+            \ \"value\": \"+1 555 0100\"\n      }\n    ]\n  }\n}\n</response_format>"
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              result:
+                additionalProperties: false
+                properties:
+                  fields:
+                    items:
+                      additionalProperties: false
+                      properties:
+                        id:
+                          type: string
+                        value:
+                          type: string
+                      required:
+                      - id
+                      - value
+                      type: object
+                    type: array
+                required:
+                - fields
+                type: object
+            required:
+            - result
+            type: object
+        structured_output_enabled: true
+        title: LLM (1)
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '17626300574630'
+      position:
+        x: 1298.4408837402573
+        y: 156.57990121720985
+      positionAbsolute:
+        x: 1298.4408837402573
+        y: 156.57990121720985
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1762605669992'
+          - text
+          value_type: string
+          variable: json_data
+        selected: false
+        title: End 2
+        type: end
+      height: 89
+      id: '1762631769286'
+      position:
+        x: 1761.1837990139227
+        y: -39.06229877850241
+      positionAbsolute:
+        x: 1761.1837990139227
+        y: -39.06229877850241
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_team_authorization: true
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: ''
+            ja_JP: ''
+            pt_BR: ''
+            zh_Hans: ''
+          label:
+            en_US: item_id
+            ja_JP: item_id
+            pt_BR: item_id
+            zh_Hans: item_id
+          llm_description: ''
+          max: null
+          min: null
+          name: item_id
+          options: []
+          placeholder:
+            en_US: ''
+            ja_JP: ''
+            pt_BR: ''
+            zh_Hans: ''
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        params:
+          item_id: ''
+        provider_id: 019a65b3-74b4-7a3b-8713-ee3605d5225c
+        provider_name: db_connector
+        provider_type: workflow
+        selected: false
+        title: db_connector
+        tool_configurations: {}
+        tool_description: ''
+        tool_label: db_connector
+        tool_name: db_connector
+        tool_node_version: '2'
+        tool_parameters:
+          item_id:
+            type: mixed
+            value: '{{#1762600648742.product_id#}}'
+        type: tool
+      height: 52
+      id: '1762642883660'
+      position:
+        x: 656.6478336494196
+        y: -261.23924596435984
+      positionAbsolute:
+        x: 656.6478336494196
+        y: -261.23924596435984
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 203.1107369174831
+      y: 458.13458428970193
+      zoom: 0.6547066220733991
+  rag_pipeline_variables: []
