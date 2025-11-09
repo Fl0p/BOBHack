@@ -1,5 +1,7 @@
 # BOOB - Back Office Operations Bots Solution
 
+![Architecture](arch.png)
+
 > Automate routine back-office operations with intelligent bots
 
 This is a submodule of the main repository: [BOBHack](git@github.com:Fl0p/BOBHack.git)
