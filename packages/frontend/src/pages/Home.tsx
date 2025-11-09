@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 export const Home = () => {
@@ -14,11 +15,15 @@ export const Home = () => {
 
   return (
     <div className="home-page">
+      {/* Join Button */}
+      <Link to="/login" className="home-join-button">
+        Join
+      </Link>
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
           <h1 className="hero-title">
-            Back Office Operations Bot Solution
+            Back Office Operations Bots Solution
           </h1>
           <p className="hero-subtitle">
             Automate routine back-office operations with intelligent bots
@@ -63,6 +68,12 @@ export const Home = () => {
           The system helps automate routine tasks, improves work efficiency, 
           and reduces the likelihood of errors in operational processes.
         </p>
+      </section>
+
+      {/* Image Section */}
+      <section className="image-section">
+        <img src="/img.jpg" alt="Banner" className="section-image" />
+        <button className="demo-button">Watch the demo</button>
       </section>
 
       {/* Footer */}

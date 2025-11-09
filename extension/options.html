@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dify Settings</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 24px;
+        max-width: 560px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        font-weight: 600;
+      }
+
+      input {
+        font: inherit;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+      }
+
+      button {
+        align-self: flex-start;
+        padding: 0.6rem 1.4rem;
+        font: inherit;
+        border-radius: 6px;
+        border: 1px solid #005fcc;
+        background: #0b66ff;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      p[role='status'] {
+        min-height: 1.25rem;
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      p[role='status'].error {
+        color: #d22;
+      }
+
+      p[role='status'].success {
+        color: #157347;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dify Connection</h1>
+      <form id="settings-form">
+        <label for="dify-endpoint">
+          Dify endpoint
+          <input
+            id="dify-endpoint"
+            name="difyEndpoint"
+            type="url"
+            placeholder="https://your-dify-endpoint/v1/workflows/run"
+            autocomplete="off"
+            required
+          />
+        </label>
+        <label for="dify-api-key">
+          Dify API key
+          <input
+            id="dify-api-key"
+            name="difyApiKey"
+            type="password"
+            placeholder="app-..."
+            autocomplete="off"
+            required
+          />
+        </label>
+        <button type="submit">Save</button>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+    <script type="module" src="./options.js"></script>
+  </body>
+</html>
+

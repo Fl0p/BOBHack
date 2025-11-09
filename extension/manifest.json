@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "BOOBS",
   "version": "0.1.0",
-  "description": "Back Office Operations Bot Solution",
+  "description": "Back Office Operations Bots Solution",
+  "options_page": "options.html",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Dify Autofill"
@@ -33,6 +34,7 @@
         "content/cssPathBuilder.js",
         "content/domSnapshotCollector.js",
         "content/elementValueSetter.js",
+        "sites/olx/elementValueEnhancer.js",
         "content/fieldValueApplier.js",
         "sites/olx/prefillService.js",
         "sites/allegrolokalnie/prefillService.js",

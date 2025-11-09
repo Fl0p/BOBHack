@@ -38,15 +38,82 @@
     }
 
     mapElement(element) {
+      const label = this.labelResolver.getLabel(element);
       return {
         tag: element.tagName.toLowerCase(),
         type: element.type ?? null,
         name: element.name ?? null,
         id: element.id ?? null,
-        label: this.labelResolver.getLabel(element),
+        label,
         placeholder: element.placeholder ?? null,
+        aliases: this.extractAliases(element, label),
         path: this.pathBuilder.build(element)
       };
+    }
+
+    extractAliases(element, labelText) {
+      if (!element) return [];
+
+      const aliases = new Set();
+      const add = (value) => {
+        if (typeof value !== 'string') return;
+        const trimmed = value.trim();
+        if (trimmed) aliases.add(trimmed);
+      };
+
+      const parseOptionList = (raw) => {
+        if (typeof raw !== 'string' || !raw.trim()) return;
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            parsed.forEach((item) => add(typeof item === 'string' ? item : String(item ?? '')));
+            return;
+          }
+        } catch {
+          const items = raw
+            .split(/[\n;,]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+          items.forEach(add);
+        }
+      };
+
+      add(labelText);
+      add(element.placeholder);
+      add(element.name);
+      add(element.id);
+      add(element.getAttribute?.('aria-label'));
+
+      const labelledBy = element.getAttribute?.('aria-labelledby');
+      if (typeof labelledBy === 'string' && labelledBy.trim()) {
+        labelledBy
+          .split(/\s+/)
+          .map((id) => document.getElementById(id))
+          .filter(Boolean)
+          .forEach((node) => add(node.textContent ?? ''));
+      }
+
+      const dataSources = [
+        element.dataset?.bobOlxFieldLabel,
+        element.dataset?.bobOlxFieldName
+      ];
+
+      const container = element.closest?.('[data-bob-olx-field-label],[data-bob-olx-field-name],[data-bob-olx-options]');
+      if (container?.dataset) {
+        dataSources.push(container.dataset.bobOlxFieldLabel, container.dataset.bobOlxFieldName);
+      }
+
+      dataSources.forEach(add);
+
+      const optionSources = [
+        element.dataset?.bobOlxOptions,
+        element.getAttribute?.('data-bob-olx-options'),
+        container?.dataset?.bobOlxOptions
+      ].filter(Boolean);
+
+      optionSources.forEach(parseOptionList);
+
+      return Array.from(aliases);
     }
   }
 

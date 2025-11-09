@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Dify Autofill</title>
+    <title>Form Filler Bot / BOOB Solution</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -33,6 +33,51 @@
       textarea {
         resize: vertical;
       }
+      .manual-input-wrapper {
+        display: block;
+      }
+      .manual-input-text {
+        width: 100%;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      button {
+        padding: 10px 16px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #005fcc;
+        background: #0b66ff;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      button:hover {
+        background: #005fcc;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      #run {
+        flex: 1 1 auto;
+      }
+      .manual-mic-button {
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .manual-mic-button svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
       .checkbox {
         display: flex;
         align-items: center;
@@ -60,7 +105,7 @@
     <form id="form">
       <div class="field" id="product-field">
         <label for="productId">Product ID</label>
-        <input type="text" id="productId" name="productId" placeholder="Enter product ID" value="1234" />
+        <input type="text" id="productId" name="productId" placeholder="Enter product ID" value="" />
       </div>
 
       <label class="checkbox">
@@ -70,10 +115,33 @@
 
       <div class="field hidden" id="manual-field">
         <label for="manualInput">Manual Input</label>
-        <textarea id="manualInput" name="manualInput" rows="4" placeholder="Paste manual payload"></textarea>
+        <div class="manual-input-wrapper">
+          <textarea
+            id="manualInput"
+            class="manual-input-text"
+            name="manualInput"
+            rows="4"
+            placeholder="Paste manual payload"
+          ></textarea>
+        </div>
       </div>
 
-      <button id="run" type="submit">Fill Form</button>
+      <div class="actions">
+        <button id="run" type="submit">Fill Form</button>
+        <button
+          id="manualMicButton"
+          class="manual-mic-button"
+          type="button"
+          title="Voice Input"
+          aria-label="Voice Input"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"
+            />
+          </svg>
+        </button>
+      </div>
     </form>
     <div id="status"></div>
     <script type="module" src="popup.js"></script>
