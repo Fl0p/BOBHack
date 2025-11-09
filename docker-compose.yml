@@ -467,6 +467,8 @@ services:
     depends_on:
       dify-db:
         condition: service_healthy
+      dify-redis:
+        condition: service_started
     networks:
       - bobhack-network
 
