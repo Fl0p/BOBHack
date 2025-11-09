@@ -29,6 +29,28 @@ Check out the live demo: [https://bob.aignite.pl/](https://bob.aignite.pl/)
 - Google OAuth2 authentication
 - Easy-to-use interface
 
+## Back-Office Bot Platform: Processes We Unlock
+
+> This isn’t a one-off bot for a single form. We built the **core of a back-office bot platform** that handles product cards, returns, expenses, supplier requests, and any other operational form with equal confidence.
+
+Every back-office process is captured as a configuration: fields, types, mandatory logic, validation rules, data sources. On top sits a unified LLM layer that pulls data from integrations, assembles a structured answer, and returns a ready draft to the operator. The product-card bot is showcased as the **first module** on this platform, not the only use case.
+
+### Why the Platform Beats “Just One Bot”
+
+1. **Unified form model.** Any form lives in a single format: fields → type → required → validation rules → AI hints. The core doesn’t care whether it is a product form or a return — just different configurations.
+2. **Reusable AI stack.** One LLM layer handles prompting, structured JSON output, validation, logging. To launch a new bot you describe the form, connect data sources, and lightly tailor the prompt.
+3. **Process scalability.** Today we demo product onboarding. Tomorrow returns, supplier requests, expenses. The architecture already lets us “stamp” bots via configuration instead of rewriting projects.
+4. **Single operator workspace.** All back-office bots live in one interface: today the operator onboards products, tomorrow files a return, next week prepares an expense report — without system hopping.
+5. **Bridge operators and makers.** The platform gives non-technical back-office teams a clear way to describe fields, rules, and data sources, while technical specialists reuse the same core to spin up the bot — collaboration happens in one place instead of endless briefs.
+
+### How It Lands in the Business Story
+
+> For the business this is a **platform play**: integrate with data once, sign off security and access once, then spin up new processes without heavy rollouts. Each incremental use case gets cheaper and the roadmap stays predictable.
+
+**The foundation already runs.** During the hackathon we shipped the platform core for product onboarding: forms are configuration-driven, the backend is field-agnostic, the LLM layer is universal. New bots land on the same foundation without rewriting the system.
+
+> Our “form filler” isn’t a script for one scenario but the **first brick of an ecosystem of back-office bots** that strip routine from the entire operational cycle.
+
 ## Technology Stack
 
 **AI Engine:** [Dify.ai](https://dify.ai/) - Production-ready AI Agent platform for building agentic workflows, RAG pipelines, and intelligent automation.
