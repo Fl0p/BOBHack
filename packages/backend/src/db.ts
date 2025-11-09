@@ -47,8 +47,18 @@ export async function initializeDatabase(): Promise<void> {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
     console.log('Users table created/verified!');
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id SERIAL PRIMARY KEY,
+        dify_api_key TEXT NOT NULL,
+        dify_api_url TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    console.log('Settings table created/verified!');
     
     // Add OAuth columns if they don't exist (migration for existing tables)
     console.log('Running OAuth columns migration...');
@@ -279,4 +289,3 @@ export async function initializeRetailSchema(): Promise<void> {
     client.release();
   }
 }
-

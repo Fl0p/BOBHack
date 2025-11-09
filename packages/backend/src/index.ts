@@ -24,6 +24,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { OAuth2Client } from 'google-auth-library';
 import { initPool, getPool, initializeDatabase, initializeRetailSchema } from './db.js';
+import { createSettingsRouter } from './modules/settings/routes/settingsRoutes.js';
 
 // Load Google OAuth credentials
 // In Docker: /app/client_secret.json, in dev: ../../../client_secret.json
@@ -59,7 +60,7 @@ app.use(session({
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-}));
+}) as unknown as express.RequestHandler);
 
 // Google OAuth authentication endpoint
 app.post('/api/auth/google', async (req: Request, res: Response) => {
@@ -191,6 +192,8 @@ app.get('/api/hello', async (req: Request, res: Response) => {
     });
   }
 });
+
+app.use('/api/settings', createSettingsRouter());
 
 // Initialize database and start server
 async function startServer() {
