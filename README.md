@@ -128,4 +128,4 @@ yarn dev:frontend # Frontend on http://localhost:3000
 
 ---
 
-*Built with ❤️💀🤖 during synder-hackathon-wroclaw-2025*
+Built with ❤️💀🤖 during [synder-hackathon-wroclaw-2025](https://github.com/SynderAccounting/synder-hackathon-wroclaw-2025)
