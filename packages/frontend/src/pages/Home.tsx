@@ -73,7 +73,12 @@ export const Home = () => {
       {/* Image Section */}
       <section className="image-section">
         <img src="/img.jpg" alt="Banner" className="section-image" />
-        <button className="demo-button">Watch the demo</button>
+        <button 
+          className="demo-button"
+          onClick={() => window.open('https://youtu.be/Q1QFQkheE2c', '_blank')}
+        >
+          Watch the demo
+        </button>
       </section>
 
       {/* Footer */}

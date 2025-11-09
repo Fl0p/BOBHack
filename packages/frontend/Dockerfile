@@ -12,6 +12,7 @@ RUN npm install
 # Copy source code
 COPY index.html ./
 COPY src ./src
+COPY public ./public
 
 # Build argument for API URL
 ARG VITE_API_URL
