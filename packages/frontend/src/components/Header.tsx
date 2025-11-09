@@ -33,9 +33,6 @@ export const Header = () => {
             Join
           </Link>
         )}
-        <div className="header-logo">
-          <Link to="/">BOBHack</Link>
-        </div>
       </div>
     </header>
   );

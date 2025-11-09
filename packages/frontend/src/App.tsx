@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { Dashboard } from './pages/Dashboard';
 import './App.css';
 
 // Google Client ID from client_secret.json
@@ -14,13 +15,16 @@ function App() {
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <Router>
-          <div className="App">
-            <Header />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={
+              <div className="App">
+                <Header />
+                <Dashboard />
+              </div>
+            } />
+          </Routes>
         </Router>
       </AuthProvider>
     </GoogleOAuthProvider>

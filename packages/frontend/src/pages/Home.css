@@ -1,5 +1,29 @@
 .home-page {
-  padding-top: 80px; /* Account for fixed header */
+  padding-top: 0;
+  position: relative;
+}
+
+.home-join-button {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: white;
+  color: #667eea;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.home-join-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #667eea;
+  color: white;
 }
 
 .hero {
