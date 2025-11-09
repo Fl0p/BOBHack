@@ -31,11 +31,16 @@ The build workflow is triggered on:
 5. **build services**
    - Executes build commands for backend and frontend
 
-6. **make scripts executable**
+6. **create client_secret.json**
+   - Creates Google OAuth credentials file
+   - Source: `GOOGLE_CLIENT_SECRET` GitHub secret
+   - Command: `echo '${{ secrets.GOOGLE_CLIENT_SECRET }}' > client_secret.json`
+
+7. **make scripts executable**
    - Sets executable permissions on deployment scripts
    - Command: `chmod +x scripts/rebuild-and-start.sh`
 
-7. **run rebuild and start**
+8. **run rebuild and start**
    - Executes the rebuild and start script
    - Validates Docker Compose configuration
    - Command: `./scripts/rebuild-and-start.sh`
@@ -50,6 +55,13 @@ The build workflow is triggered on:
    - Command: `docker-compose logs`
 
 ## recent enhancements
+
+### commit 8514047 - oauth secret integration
+
+Added Google OAuth credentials to CI/CD:
+- Creates `client_secret.json` from GitHub secrets
+- Enables authentication in deployed environment
+- Securely manages OAuth credentials
 
 ### commit 85155bb - enhanced ci workflow
 
@@ -66,6 +78,47 @@ These enhancements improve:
 ### commit e9895898 - ci status
 
 The CI workflow can be temporarily disabled when needed for maintenance or infrastructure changes.
+
+## github secrets configuration
+
+The CI/CD pipeline requires several secrets to be configured in the GitHub repository.
+
+### required secrets
+
+Navigate to **Settings** → **Secrets and variables** → **Actions** and add:
+
+1. **ENV_FILE**
+   - Complete `.env` file contents for production
+   - Must include all required environment variables
+   - Example structure:
+     ```env
+     BACKEND_URL=https://api.aignite.pl
+     FRONTEND_URL=https://bob.aignite.pl
+     DIFY_URL=https://dify.aignite.pl
+     SESSION_SECRET=<generated-secret>
+     BACKEND_DB_PASSWORD=<secure-password>
+     # ... all other variables from .env.example
+     ```
+
+2. **GOOGLE_CLIENT_SECRET**
+   - Complete contents of `client_secret.json` file
+   - Downloaded from Google Cloud Console
+   - JSON format with OAuth credentials
+
+3. **CLOUDFLARE_CREDENTIALS**
+   - Cloudflare Tunnel credentials JSON file
+   - Used in `.cloudflared/` directory
+   - Format: tunnel credentials from Cloudflare dashboard
+
+### secret management best practices
+
+1. **Never commit secrets** to the repository
+2. **Rotate secrets regularly** (every 90 days minimum)
+3. **Use GitHub environment protection** for production deployments
+4. **Audit secret access** in GitHub audit logs
+5. **Store backups securely** in password manager or secure vault
+6. **Use minimal permissions** for service accounts
+7. **Monitor for leaked secrets** with GitHub secret scanning
 
 ## scripts
 

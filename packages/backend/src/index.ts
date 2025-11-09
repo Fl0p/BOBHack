@@ -9,7 +9,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const envPath = resolve(__dirname, '../../../.env');
 console.log('Loading .env from:', envPath);
-config({ path: envPath });
+console.log('process.cwd():', process.cwd());
+console.log('NODE_ENV before .env:', process.env.NODE_ENV);
+config({ path: envPath, override: false }); // Don't override existing env vars
+console.log('NODE_ENV after .env:', process.env.NODE_ENV);
+console.log('BACKEND_DB_PORT:', process.env.BACKEND_DB_PORT);
 console.log('DB Password loaded:', process.env.BACKEND_DB_PASSWORD ? '✓ Yes' : '✗ No');
 console.log('Session Secret loaded:', process.env.SESSION_SECRET ? '✓ Yes' : '✗ No');
 
@@ -19,10 +23,14 @@ import cors from 'cors';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { OAuth2Client } from 'google-auth-library';
-import { initPool, getPool, initializeDatabase } from './db.js';
+import { initPool, getPool, initializeDatabase, initializeRetailSchema } from './db.js';
 
 // Load Google OAuth credentials
-const clientSecretPath = resolve(__dirname, '../../../client_secret.json');
+// In Docker: /app/client_secret.json, in dev: ../../../client_secret.json
+const clientSecretPath = process.env.NODE_ENV === 'production' 
+  ? '/app/client_secret.json' 
+  : resolve(__dirname, '../../../client_secret.json');
+console.log('Loading client_secret.json from:', clientSecretPath);
 const clientSecret = JSON.parse(readFileSync(clientSecretPath, 'utf-8'));
 const googleClient = new OAuth2Client(clientSecret.web.client_id);
 
@@ -189,6 +197,7 @@ async function startServer() {
   try {
     initPool();
     await initializeDatabase();
+    await initializeRetailSchema();
     
     app.listen(PORT, () => {
       console.log(`🚀 Backend server running on http://localhost:${PORT}`);

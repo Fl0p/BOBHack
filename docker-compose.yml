@@ -26,6 +26,9 @@ services:
       - BACKEND_DB_USER=${BACKEND_DB_USER:-bobhack}
       - BACKEND_DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - BACKEND_DB_NAME=${BACKEND_DB_NAME:-bobhack}
+      - SESSION_SECRET=${SESSION_SECRET}
+    volumes:
+      - ./client_secret.json:/app/client_secret.json:ro
     depends_on:
       backend-db:
         condition: service_healthy
@@ -403,6 +406,7 @@ services:
     image: langgenius/dify-plugin-daemon:0.3.3-local
     container_name: dify-plugin-daemon
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
       # Database
       DB_USERNAME: ${DB_USERNAME:-dify}
@@ -463,6 +467,8 @@ services:
     depends_on:
       dify-db:
         condition: service_healthy
+      dify-redis:
+        condition: service_started
     networks:
       - bobhack-network
 

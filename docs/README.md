@@ -21,9 +21,13 @@ Welcome to the BOBHack project documentation!
   - [Vite Configuration](./frontend/vite-configuration.md)
   - [Development](./frontend/development.md)
 
+### Authentication
+- [Google OAuth Setup Guide](./oauth_setup.md)
+
 ### Deployment
 - [Docker Setup Guide](./docker-setup.md)
 - [CI/CD Pipeline](./ci-cd.md)
+- [Database Access](./database-access.md)
 
 ### Extension
 - [Browser Extension](./extension/README.md)
